@@ -1,0 +1,14 @@
+description = 'Spring Yarn Basic Examples'
+
+project('simple-command') {
+  description = 'Spring Yarn with Simple Command Example'
+}
+
+project('list-applications') {
+  description = 'Spring Yarn with List Applications Example'
+}
+
+project('multi-context') {
+  description = 'Spring Yarn with Multi Context Example'
+}
+
