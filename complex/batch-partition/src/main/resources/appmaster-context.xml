@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:yarn="http://www.springframework.org/schema/yarn"
+    xmlns:yarn-int="http://www.springframework.org/schema/yarn/integration"
+    xmlns:yarn-batch="http://www.springframework.org/schema/yarn/batch"
+    xmlns:int="http://www.springframework.org/schema/integration"    
+    xmlns:int-ip="http://www.springframework.org/schema/integration/ip"    
+    xmlns:batch="http://www.springframework.org/schema/batch"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/yarn http://www.springframework.org/schema/yarn/spring-yarn.xsd
+        http://www.springframework.org/schema/yarn/integration http://www.springframework.org/schema/yarn/integration/spring-yarn-integration.xsd
+        http://www.springframework.org/schema/yarn/batch http://www.springframework.org/schema/yarn/batch/spring-yarn-batch.xsd
+        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/ip http://www.springframework.org/schema/integration/ip/spring-integration-ip.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:property-placeholder location="hadoop.properties"/>
+
+    <yarn:configuration>
+        fs.defaultFS=${hd.fs}
+        yarn.resourcemanager.address=${hd.rm}
+        fs.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem
+    </yarn:configuration>
+
+    <yarn:localresources local="hdfs://0.0.0.0:9000" remote="hdfs://0.0.0.0:9000">
+        <yarn:hdfs path="/app/batch-partition/batch-partition-1.0.0.M1.jar"/>
+        <yarn:hdfs path="/app/spring-yarn-core-1.0.0.BUILD-SNAPSHOT.jar"/>
+        <yarn:hdfs path="/app/spring-yarn-integration-1.0.0.BUILD-SNAPSHOT.jar"/>
+        <yarn:hdfs path="/app/spring-yarn-batch-1.0.0.BUILD-SNAPSHOT.jar"/>
+        <yarn:hdfs path="/lib/aopalliance-1.0.jar"/>
+        <yarn:hdfs path="/lib/spring-aop-3.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-beans-3.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-context-3.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-context-support-3.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-core-3.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-expression-3.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-tx-3.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-jdbc-3.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-batch-core-2.1.9.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-batch-infrastructure-2.1.9.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-integration-core-2.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-integration-ip-2.2.1.RELEASE.jar"/>
+        <yarn:hdfs path="/lib/spring-integration-stream-2.2.1.RELEASE.jar"/>
+    </yarn:localresources>
+    
+    <yarn:environment>
+        <yarn:classpath default-yarn-app-classpath="true" delimiter=":">
+            ./*
+        </yarn:classpath>
+    </yarn:environment>
+    
+    <yarn-batch:master>
+        <yarn-batch:container-command>
+            <![CDATA[
+            /usr/local/java/bin/java
+            org.springframework.yarn.container.CommandLineContainerRunner
+            container-context.xml
+            1><LOG_DIR>/Container.stdout
+            2><LOG_DIR>/Container.stderr
+            ]]>
+        </yarn-batch:container-command>
+    </yarn-batch:master>
+
+    <!-- appmaster service client -->
+
+    <bean id="serializer" class="org.springframework.yarn.integration.ip.mind.MindRpcSerializer" />
+    <bean id="deserializer" class="org.springframework.yarn.integration.ip.mind.MindRpcSerializer" />
+
+    <bean id="socketSupport" class="org.springframework.yarn.integration.support.DefaultTcpSocketSupport" />
+    
+    <int-ip:tcp-connection-factory id="serverConnectionFactory"
+        type="server"
+        port="0"
+        socket-support="socketSupport"
+        serializer="serializer"        
+        deserializer="deserializer"/>
+
+    <int-ip:tcp-inbound-gateway id="inboundGateway"
+        connection-factory="serverConnectionFactory"
+        request-channel="serverChannel" />
+    
+    <int:channel id="serverChannel" />
+
+    <int:service-activator id="serviceActivator" 
+        input-channel="serverChannel"
+        ref="batchService"
+        method="handleMessage" />
+
+    <bean id="jobRepositoryRemoteService" class="org.springframework.yarn.batch.repository.JobRepositoryRemoteService" >
+        <property name="mapJobRepositoryFactoryBean" ref="&amp;jobRepository"/>
+    </bean>
+    
+    <bean id="batchService" class="org.springframework.yarn.examples.BatchAppmasterService" >
+        <property name="jobRepositoryRemoteService" ref="jobRepositoryRemoteService"/>
+    </bean>
+
+    <bean id="yarnAmservice" class="org.springframework.yarn.integration.ip.mind.MindAppmasterService" >
+        <property name="socketSupport" ref="socketSupport"/>
+    </bean>
+    
+    <!-- 
+    <yarn-int:amservice/>
+     -->
+
+    <!-- batch config -->
+    
+    <bean id="partitionHandler" class="org.springframework.yarn.batch.partition.BatchPartitionHandler">
+        <constructor-arg index="0"><ref bean="yarnAppmaster"/></constructor-arg>
+        <constructor-arg index="1" value="2"/>
+        <constructor-arg index="2" value="remoteStep"/>
+    </bean>
+    
+    
+    <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
+    <bean id="reader" class="org.springframework.yarn.examples.ExampleItemReader"/>
+    <bean id="writer" class="org.springframework.yarn.examples.ExampleItemWriter"/>
+        
+    <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="jobExplorer" class="org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean">
+        <property name="repositoryFactory" ref="&amp;jobRepository" />
+    </bean>
+    
+    <batch:job id="job">
+        <batch:step id="master">
+            <batch:partition step="step" partitioner="yarnAppmaster" handler="partitionHandler"/>
+        </batch:step>
+    </batch:job>
+
+    <batch:step id="step">
+        <batch:tasklet transaction-manager="transactionManager" start-limit="100">
+            <batch:chunk reader="reader" writer="writer" commit-interval="1"/>
+        </batch:tasklet>
+    </batch:step>
+
+    <bean id="hello" class="org.springframework.yarn.examples.PrintTasklet">
+        <property name="message" value="Hello"/>
+    </bean>
+    
+    <batch:step id="remoteStep">
+        <batch:tasklet transaction-manager="transactionManager" start-limit="100" ref="hello"/>
+    </batch:step>
+    
+    <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository"/>
+    </bean>
+    
+</beans>

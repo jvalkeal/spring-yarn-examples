@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:yarn-int="http://www.springframework.org/schema/yarn/integration"
+    xmlns:batch="http://www.springframework.org/schema/batch"
+    xmlns:int="http://www.springframework.org/schema/integration"    
+    xmlns:int-ip="http://www.springframework.org/schema/integration/ip"    
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/yarn http://www.springframework.org/schema/yarn/spring-yarn.xsd
+        http://www.springframework.org/schema/yarn/integration http://www.springframework.org/schema/yarn/integration/spring-yarn-integration.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/ip http://www.springframework.org/schema/integration/ip/spring-integration-ip.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:property-placeholder system-properties-mode="OVERRIDE"/>    
+    
+    <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
+    
+    <bean id="jobRepository" class="org.springframework.yarn.batch.repository.RemoteJobRepositoryFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="appmasterScOperations" ref="mindAppmasterServiceClient"/>
+    </bean>
+
+    <bean id="jobExplorer" class="org.springframework.yarn.batch.repository.RemoteJobExplorerFactoryBean">
+        <property name="repositoryFactory" ref="&amp;jobRepository" />
+    </bean>
+    
+    <bean id="hello" class="org.springframework.yarn.examples.PrintTasklet">
+        <property name="message" value="Hello"/>
+    </bean>
+    
+    <batch:step id="remoteStep">
+        <batch:tasklet transaction-manager="transactionManager" start-limit="100" ref="hello"/>
+    </batch:step>
+
+    <bean id="stepLocator" class="org.springframework.yarn.batch.partition.BeanFactoryStepLocator"/>
+
+    <bean id="serializer" class="org.springframework.yarn.integration.ip.mind.MindRpcSerializer" />
+    <bean id="deserializer" class="org.springframework.yarn.integration.ip.mind.MindRpcSerializer" />
+    
+    <int-ip:tcp-connection-factory id="clientConnectionFactory"
+        type="client"
+        host="localhost"
+        port="${amservice.port}"
+        serializer="serializer"        
+        deserializer="deserializer"/>
+    
+    <int-ip:tcp-outbound-gateway id="outboundGateway"
+        connection-factory="clientConnectionFactory"
+        request-channel="clientRequestChannel"
+        reply-channel="clientResponseChannel" />
+    
+    <int:channel id="clientRequestChannel" />
+    <int:channel id="clientResponseChannel" >
+        <int:queue />
+    </int:channel>
+    
+    
+    <bean id="mindAppmasterServiceClient" class="org.springframework.yarn.integration.ip.mind.MindAppmasterServiceClient">
+        <property name="requestChannel" ref="clientRequestChannel"/>
+        <property name="responseChannel" ref="clientResponseChannel"/>
+    </bean>
+        
+    <bean id="yarnContainer" class="org.springframework.yarn.examples.BatchPartitionBeanExample">
+        <constructor-arg index="0"><ref bean="mindAppmasterServiceClient"/></constructor-arg>
+        <constructor-arg index="1"><ref bean="stepLocator"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="jobExplorer"/></constructor-arg>
+    </bean>
+    
+</beans>

@@ -1,0 +1,5 @@
+description = 'Spring Yarn Complex Examples'
+
+project('batch-partition') {
+  description = 'Spring Yarn with Batch Partition Example'
+}

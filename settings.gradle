@@ -1,3 +1,4 @@
 rootProject.name = 'spring-yarn-examples'
 
 include ':basic:simple-command',':basic:list-applications',':basic:multi-context'
+include ':complex:batch-partition'

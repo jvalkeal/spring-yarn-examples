@@ -34,6 +34,9 @@ subprojects { subproject ->
     apply plugin: 'eclipse'  // `gradle eclipse` to generate .classpath/.project
     apply plugin: 'maven'
 
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6 	
+	
     apply {
         task "run-${subproject.name}"(dependsOn:'classes') << {
             subproject.tasks['run'].execute()
@@ -47,8 +50,13 @@ subprojects { subproject ->
     }
 
     dependencies { 
+        compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
+        compile "org.springframework.batch:spring-batch-infrastructure:$springBatchVersion"
         compile "org.springframework.yarn:spring-yarn-core:$springYarnVersion"
+        compile "org.springframework.yarn:spring-yarn-integration:$springYarnVersion"
+        compile "org.springframework.yarn:spring-yarn-batch:$springYarnVersion"
         compile "org.apache.hadoop:hadoop-yarn-api:$hadoopVersion"
+        compile "org.springframework:spring-jdbc:$springVersion"
         runtime "org.apache.hadoop:hadoop-yarn-common:$hadoopVersion"
         runtime "org.apache.hadoop:hadoop-common:$hadoopVersion"
         runtime("org.apache.hadoop:hadoop-hdfs:$hadoopVersion") {
@@ -60,16 +68,13 @@ subprojects { subproject ->
         testCompile "org.springframework:spring-test:$springVersion"
     }
 
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6 
-        
     eclipse {
 		project {
 			natures += 'org.springframework.ide.eclipse.core.springnature'
 		}
 	}
 
-    [compileJava, compileTestJava]*.options*.compilerArgs = ["-Xlint:-serial"]
+    [compileJava, compileTestJava]*.options*.compilerArgs = ["-Xlint:-serial", "-Xlint:-options"]
 
     task sourcesJar(type: Jar) {
         classifier = 'sources'
