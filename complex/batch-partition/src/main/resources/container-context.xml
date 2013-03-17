@@ -21,7 +21,7 @@
     
     <bean id="jobRepository" class="org.springframework.yarn.batch.repository.RemoteJobRepositoryFactoryBean">
         <property name="transactionManager" ref="transactionManager"/>
-        <property name="appmasterScOperations" ref="mindAppmasterServiceClient"/>
+        <property name="appmasterScOperations" ref="yarnAmserviceClient"/>
     </bean>
 
     <bean id="jobExplorer" class="org.springframework.yarn.batch.repository.RemoteJobExplorerFactoryBean">
@@ -37,35 +37,29 @@
     </batch:step>
 
     <bean id="stepLocator" class="org.springframework.yarn.batch.partition.BeanFactoryStepLocator"/>
+    
+    <bean id="mapper" class="org.springframework.yarn.integration.support.Jackson2ObjectMapperFactoryBean" />
+    
+    <yarn-int:converter>
+        <bean class="org.springframework.yarn.integration.convert.MindObjectToHolderConverter">
+            <constructor-arg ref="mapper"/>
+        </bean>
+    </yarn-int:converter>
 
-    <bean id="serializer" class="org.springframework.yarn.integration.ip.mind.MindRpcSerializer" />
-    <bean id="deserializer" class="org.springframework.yarn.integration.ip.mind.MindRpcSerializer" />
+    <yarn-int:converter>
+        <bean class="org.springframework.yarn.integration.convert.MindHolderToObjectConverter">
+            <constructor-arg ref="mapper"/>
+            <constructor-arg value="org.springframework.yarn.batch.repository.bindings"/>
+        </bean>
+    </yarn-int:converter>
     
-    <int-ip:tcp-connection-factory id="clientConnectionFactory"
-        type="client"
-        host="localhost"
-        port="${amservice.port}"
-        serializer="serializer"        
-        deserializer="deserializer"/>
+    <yarn-int:amservice-client 
+        service-impl="org.springframework.yarn.integration.ip.mind.DefaultMindAppmasterServiceClient"
+        host="${amservice.address}"
+        port="${amservice.port}" />
     
-    <int-ip:tcp-outbound-gateway id="outboundGateway"
-        connection-factory="clientConnectionFactory"
-        request-channel="clientRequestChannel"
-        reply-channel="clientResponseChannel" />
-    
-    <int:channel id="clientRequestChannel" />
-    <int:channel id="clientResponseChannel" >
-        <int:queue />
-    </int:channel>
-    
-    
-    <bean id="mindAppmasterServiceClient" class="org.springframework.yarn.integration.ip.mind.MindAppmasterServiceClient">
-        <property name="requestChannel" ref="clientRequestChannel"/>
-        <property name="responseChannel" ref="clientResponseChannel"/>
-    </bean>
-        
     <bean id="yarnContainer" class="org.springframework.yarn.examples.BatchPartitionBeanExample">
-        <constructor-arg index="0"><ref bean="mindAppmasterServiceClient"/></constructor-arg>
+        <constructor-arg index="0"><ref bean="yarnAmserviceClient"/></constructor-arg>
         <constructor-arg index="1"><ref bean="stepLocator"/></constructor-arg>
         <constructor-arg index="2"><ref bean="jobExplorer"/></constructor-arg>
     </bean>

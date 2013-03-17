@@ -32,6 +32,9 @@
         <yarn:hdfs path="/app/spring-yarn-integration-1.0.0.BUILD-SNAPSHOT.jar"/>
         <yarn:hdfs path="/app/spring-yarn-batch-1.0.0.BUILD-SNAPSHOT.jar"/>
         <yarn:hdfs path="/lib/aopalliance-1.0.jar"/>
+        <yarn:hdfs path="/lib/jackson-core-2.1.4.jar"/>
+        <yarn:hdfs path="/lib/jackson-databind-2.1.4.jar"/>
+        <yarn:hdfs path="/lib/jackson-annotations-2.1.4.jar"/>
         <yarn:hdfs path="/lib/spring-aop-3.2.1.RELEASE.jar"/>
         <yarn:hdfs path="/lib/spring-beans-3.2.1.RELEASE.jar"/>
         <yarn:hdfs path="/lib/spring-context-3.2.1.RELEASE.jar"/>
@@ -66,45 +69,30 @@
     </yarn-batch:master>
 
     <!-- appmaster service client -->
-
-    <bean id="serializer" class="org.springframework.yarn.integration.ip.mind.MindRpcSerializer" />
-    <bean id="deserializer" class="org.springframework.yarn.integration.ip.mind.MindRpcSerializer" />
-
-    <bean id="socketSupport" class="org.springframework.yarn.integration.support.DefaultTcpSocketSupport" />
     
-    <int-ip:tcp-connection-factory id="serverConnectionFactory"
-        type="server"
-        port="0"
-        socket-support="socketSupport"
-        serializer="serializer"        
-        deserializer="deserializer"/>
-
-    <int-ip:tcp-inbound-gateway id="inboundGateway"
-        connection-factory="serverConnectionFactory"
-        request-channel="serverChannel" />
-    
-    <int:channel id="serverChannel" />
-
-    <int:service-activator id="serviceActivator" 
-        input-channel="serverChannel"
-        ref="batchService"
-        method="handleMessage" />
-
     <bean id="jobRepositoryRemoteService" class="org.springframework.yarn.batch.repository.JobRepositoryRemoteService" >
         <property name="mapJobRepositoryFactoryBean" ref="&amp;jobRepository"/>
-    </bean>
-    
+    </bean>    
     <bean id="batchService" class="org.springframework.yarn.examples.BatchAppmasterService" >
         <property name="jobRepositoryRemoteService" ref="jobRepositoryRemoteService"/>
     </bean>
 
-    <bean id="yarnAmservice" class="org.springframework.yarn.integration.ip.mind.MindAppmasterService" >
-        <property name="socketSupport" ref="socketSupport"/>
-    </bean>
+    <bean id="mapper" class="org.springframework.yarn.integration.support.Jackson2ObjectMapperFactoryBean" />
     
-    <!-- 
-    <yarn-int:amservice/>
-     -->
+    <yarn-int:converter>
+        <bean class="org.springframework.yarn.integration.convert.MindObjectToHolderConverter">
+            <constructor-arg ref="mapper"/>
+        </bean>
+    </yarn-int:converter>
+
+    <yarn-int:converter>
+        <bean class="org.springframework.yarn.integration.convert.MindHolderToObjectConverter">
+            <constructor-arg ref="mapper"/>
+            <constructor-arg value="org.springframework.yarn.batch.repository.bindings"/>
+        </bean>
+    </yarn-int:converter>    
+    
+    <yarn-int:amservice service-ref="batchService"/>
 
     <!-- batch config -->
     
@@ -113,7 +101,6 @@
         <constructor-arg index="1" value="2"/>
         <constructor-arg index="2" value="remoteStep"/>
     </bean>
-    
     
     <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
     <bean id="reader" class="org.springframework.yarn.examples.ExampleItemReader"/>

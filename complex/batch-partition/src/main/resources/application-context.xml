@@ -22,6 +22,9 @@
         <yarn:hdfs path="/app/spring-yarn-integration-1.0.0.BUILD-SNAPSHOT.jar"/>
         <yarn:hdfs path="/app/spring-yarn-batch-1.0.0.BUILD-SNAPSHOT.jar"/>
         <yarn:hdfs path="/lib/aopalliance-1.0.jar"/>
+        <yarn:hdfs path="/lib/jackson-core-2.1.4.jar"/>
+        <yarn:hdfs path="/lib/jackson-databind-2.1.4.jar"/>
+        <yarn:hdfs path="/lib/jackson-annotations-2.1.4.jar"/>
         <yarn:hdfs path="/lib/spring-aop-3.2.1.RELEASE.jar"/>
         <yarn:hdfs path="/lib/spring-beans-3.2.1.RELEASE.jar"/>
         <yarn:hdfs path="/lib/spring-context-3.2.1.RELEASE.jar"/>
@@ -50,7 +53,7 @@
     <yarn:client>
         <yarn:master-command>
             <![CDATA[
-            /usr/local/java7/bin/java
+            /usr/local/java/bin/java
             org.springframework.yarn.am.CommandLineAppmasterRunner
             appmaster-context.xml
             yarnAppmaster
