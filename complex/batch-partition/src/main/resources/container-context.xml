@@ -55,13 +55,13 @@
 
 	<yarn-int:amservice-client
 		service-impl="org.springframework.yarn.integration.ip.mind.DefaultMindAppmasterServiceClient"
-		host="${amservice.address}"
-		port="${amservice.port}" />
+		host="${syarn.amservice.host}"
+		port="${syarn.amservice.port}" />
 
-	<bean id="yarnContainer" class="org.springframework.yarn.examples.BatchPartitionBeanExample">
-		<constructor-arg index="0"><ref bean="yarnAmserviceClient"/></constructor-arg>
-		<constructor-arg index="1"><ref bean="stepLocator"/></constructor-arg>
-		<constructor-arg index="2"><ref bean="jobExplorer"/></constructor-arg>
+	<bean id="yarnContainer" class="org.springframework.yarn.batch.container.DefaultBatchYarnContainer">
+		<property name="stepLocator" ref="stepLocator"/>
+		<property name="jobExplorer" ref="jobExplorer"/>
+		<property name="integrationServiceClient" ref="yarnAmserviceClient"/>
 	</bean>
 
 </beans>

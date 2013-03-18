@@ -15,6 +15,9 @@
  */
 package org.springframework.yarn.examples;
 
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.yarn.container.YarnContainer;
@@ -26,6 +29,14 @@ public class MultiContextBeanExample implements YarnContainer {
 	@Override
 	public void run() {
 		log.info("Hello from MultiContextBeanExample");
+	}
+
+	@Override
+	public void setEnvironment(Map<String, String> environment) {
+	}
+
+	@Override
+	public void setParameters(Properties parameters) {
 	}
 
 }

@@ -73,7 +73,7 @@
 	<bean id="jobRepositoryRemoteService" class="org.springframework.yarn.batch.repository.JobRepositoryRemoteService" >
 		<property name="mapJobRepositoryFactoryBean" ref="&amp;jobRepository"/>
 	</bean>
-	<bean id="batchService" class="org.springframework.yarn.examples.BatchAppmasterService" >
+	<bean id="batchService" class="org.springframework.yarn.batch.repository.BatchAppmasterService" >
 		<property name="jobRepositoryRemoteService" ref="jobRepositoryRemoteService"/>
 	</bean>
 
