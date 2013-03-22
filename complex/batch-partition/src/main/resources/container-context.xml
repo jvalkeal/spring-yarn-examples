@@ -15,6 +15,9 @@
 		http://www.springframework.org/schema/integration/ip http://www.springframework.org/schema/integration/ip/spring-integration-ip.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+	<bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler"/>
+	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+
 	<context:property-placeholder system-properties-mode="OVERRIDE"/>
 
 	<bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>

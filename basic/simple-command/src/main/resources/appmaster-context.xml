@@ -10,6 +10,9 @@
 
 	<context:property-placeholder location="hadoop.properties"/>
 
+	<bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler"/>
+	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+
 	<yarn:configuration>
 		fs.defaultFS=${hd.fs}
 		yarn.resourcemanager.address=${hd.rm}
@@ -36,6 +39,7 @@
 	</yarn:environment>
 
 	<yarn:master>
+		<yarn:container-allocator/>
 		<yarn:container-command>
 			<![CDATA[
 			date
