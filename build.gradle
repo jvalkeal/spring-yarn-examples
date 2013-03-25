@@ -89,7 +89,7 @@ subprojects { subproject ->
         from configurations.runtime
     }
 	
-	build.dependsOn(copyToLib)
+	//build.dependsOn(copyToLib)
 
     task run(type: JavaExec) {
         description = 'Runs the application'

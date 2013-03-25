@@ -15,19 +15,15 @@
  */
 package org.springframework.yarn.examples;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.yarn.api.records.ApplicationReport;
+import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.yarn.client.YarnClient;
 
 /**
- * Main class for list-applications example.
+ * Main class for kill-application example.
  *
  * @author Janne Valkealahti
  *
@@ -42,18 +38,14 @@ public class Main {
 
 		try {
 			context = new ClassPathXmlApplicationContext("application-context.xml");
-
+			System.out.println("Submitting kill-application example");
 			YarnClient client = (YarnClient) context.getBean("yarnClient");
-			List<ApplicationReport> applications = client.listApplications();
-
-			System.out.println("Listing Applications: \n\n");
-			System.out.println(" Id | User | Name | Queue | StartTime | FinishTime | State | FinalStatus");
-			System.out.println("------------------------------------------------------------------------");
-
-			for (ApplicationReport a : applications) {
-				printApplicationReport(a);
-			}
-
+			ApplicationId applicationId = client.submitApplication();
+			System.out.println("Submitted kill-application example");
+			System.out.println("Waiting 10 seconds before aborting the application");
+			Thread.sleep(10000);
+			System.out.println("Asking resource manager to abort application with applicationid=" + applicationId);
+			client.killApplication(applicationId);
 		} catch (Throwable e) {
 			log.error("Error in main method", e);
 		} finally {
@@ -62,26 +54,6 @@ public class Main {
 			}
 		}
 
-	}
-
-	private static void printApplicationReport(ApplicationReport report) {
-		StringBuilder buf = new StringBuilder();
-		buf.append(report.getApplicationId());
-		buf.append(" | ");
-		buf.append(report.getUser());
-		buf.append(" | ");
-		buf.append(report.getName());
-		buf.append(" | ");
-		buf.append(report.getQueue());
-		buf.append(" | ");
-		buf.append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date(report.getStartTime())));
-		buf.append(" | ");
-		buf.append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date(report.getFinishTime())));
-		buf.append(" | ");
-		buf.append(report.getYarnApplicationState());
-		buf.append(" | ");
-		buf.append(report.getFinalApplicationStatus());
-		System.out.println(buf.toString());
 	}
 
 }

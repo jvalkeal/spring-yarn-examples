@@ -32,14 +32,14 @@
 	<!--
 	yarn container execution will fail in 2.0.3 if environment variables are sent
 	from windows to appmaster running on linux.
-	 -->
+	-->
 	<yarn:environment include-system-env="false">
 		<yarn:classpath default-yarn-app-classpath="true" delimiter=":">
 			./*
 		</yarn:classpath>
 	</yarn:environment>
 
-	<yarn:client>
+	<yarn:client app-name="multi-context">
 		<yarn:master-command>
 			<![CDATA[
 			/usr/local/java/bin/java

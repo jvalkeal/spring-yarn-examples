@@ -8,7 +8,10 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<context:property-placeholder location="hadoop.properties" system-properties-mode="OVERRIDE"/>
+	<bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler"/>
+	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+
+	<context:property-placeholder location="hadoop.properties"/>
 
 	<yarn:configuration>
 		fs.defaultFS=${hd.fs}
@@ -16,15 +19,10 @@
 		fs.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem
 	</yarn:configuration>
 
-	<yarn:localresources local="hdfs://0.0.0.0:9000" remote="${localresources.remote}">
-		<yarn:hdfs path="/app/batch-partition/batch-partition-1.0.0.M1.jar"/>
+	<yarn:localresources local="hdfs://0.0.0.0:9000" remote="hdfs://0.0.0.0:9000">
+		<yarn:hdfs path="/app/kill-application/kill-application-1.0.0.M1.jar"/>
 		<yarn:hdfs path="/app/spring-yarn-core-1.0.0.BUILD-SNAPSHOT.jar"/>
-		<yarn:hdfs path="/app/spring-yarn-integration-1.0.0.BUILD-SNAPSHOT.jar"/>
-		<yarn:hdfs path="/app/spring-yarn-batch-1.0.0.BUILD-SNAPSHOT.jar"/>
 		<yarn:hdfs path="/lib/aopalliance-1.0.jar"/>
-		<yarn:hdfs path="/lib/jackson-core-2.1.4.jar"/>
-		<yarn:hdfs path="/lib/jackson-databind-2.1.4.jar"/>
-		<yarn:hdfs path="/lib/jackson-annotations-2.1.4.jar"/>
 		<yarn:hdfs path="/lib/spring-aop-3.2.1.RELEASE.jar"/>
 		<yarn:hdfs path="/lib/spring-beans-3.2.1.RELEASE.jar"/>
 		<yarn:hdfs path="/lib/spring-context-3.2.1.RELEASE.jar"/>
@@ -32,36 +30,24 @@
 		<yarn:hdfs path="/lib/spring-core-3.2.1.RELEASE.jar"/>
 		<yarn:hdfs path="/lib/spring-expression-3.2.1.RELEASE.jar"/>
 		<yarn:hdfs path="/lib/spring-tx-3.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-jdbc-3.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-batch-core-2.1.9.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-batch-infrastructure-2.1.9.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-integration-core-2.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-integration-ip-2.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-integration-stream-2.2.1.RELEASE.jar"/>
 	</yarn:localresources>
 
-	<!--
-	yarn container execution will fail in 2.0.3 if environment variables are sent
-	from windows to appmaster running on linux.
-	-->
-	<yarn:environment include-system-env="false">
+	<yarn:environment>
 		<yarn:classpath default-yarn-app-classpath="true" delimiter=":">
 			./*
 		</yarn:classpath>
 	</yarn:environment>
 
-	<yarn:client app-name="batch-partition">
-		<yarn:master-command>
+	<yarn:master>
+		<yarn:container-command>
 			<![CDATA[
 			/usr/local/java/bin/java
-			org.springframework.yarn.am.CommandLineAppmasterRunner
-			appmaster-context.xml
-			yarnAppmaster
-			container-count=1
-			1><LOG_DIR>/AppMaster.stdout
-			2><LOG_DIR>/AppMaster.stderr
+			org.springframework.yarn.container.CommandLineContainerRunner
+			container-context.xml
+			1><LOG_DIR>/Container.stdout
+			2><LOG_DIR>/Container.stderr
 			]]>
-		</yarn:master-command>
-	</yarn:client>
+		</yarn:container-command>
+	</yarn:master>
 
 </beans>

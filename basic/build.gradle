@@ -12,3 +12,6 @@ project('multi-context') {
   description = 'Spring Yarn with Multi Context Example'
 }
 
+project('kill-application') {
+  description = 'Spring Yarn with Kill Application Example'
+}
