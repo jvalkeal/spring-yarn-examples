@@ -40,17 +40,7 @@
 	</yarn:environment>
 
 	<yarn:client app-name="kill-application">
-		<yarn:master-command>
-			<![CDATA[
-			/usr/local/java/bin/java
-			org.springframework.yarn.am.CommandLineAppmasterRunner
-			appmaster-context.xml
-			yarnAppmaster
-			container-count=2
-			1><LOG_DIR>/AppMaster.stdout
-			2><LOG_DIR>/AppMaster.stderr
-			]]>
-		</yarn:master-command>
+		<yarn:master-runner/>
 	</yarn:client>
 
 </beans>
