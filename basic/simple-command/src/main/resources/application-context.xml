@@ -35,7 +35,7 @@
 		</yarn:classpath>
 	</yarn:environment>
 
-	<yarn:client>
+	<yarn:client app-name="simple-command">
 		<yarn:master-command>
 			<![CDATA[
 			/usr/local/java/bin/java
