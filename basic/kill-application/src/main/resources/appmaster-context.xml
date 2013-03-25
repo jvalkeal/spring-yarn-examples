@@ -39,15 +39,7 @@
 	</yarn:environment>
 
 	<yarn:master>
-		<yarn:container-command>
-			<![CDATA[
-			/usr/local/java/bin/java
-			org.springframework.yarn.container.CommandLineContainerRunner
-			container-context.xml
-			1><LOG_DIR>/Container.stdout
-			2><LOG_DIR>/Container.stderr
-			]]>
-		</yarn:container-command>
+		<yarn:container-runner/>
 	</yarn:master>
 
 </beans>
