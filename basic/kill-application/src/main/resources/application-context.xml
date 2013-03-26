@@ -18,15 +18,8 @@
 
 	<yarn:localresources local="hdfs://0.0.0.0:9000" remote="${localresources.remote}">
 		<yarn:hdfs path="/app/kill-application/kill-application-1.0.0.M1.jar"/>
-		<yarn:hdfs path="/app/spring-yarn-core-1.0.0.BUILD-SNAPSHOT.jar"/>
-		<yarn:hdfs path="/lib/aopalliance-1.0.jar"/>
-		<yarn:hdfs path="/lib/spring-aop-3.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-beans-3.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-context-3.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-context-support-3.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-core-3.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-expression-3.2.1.RELEASE.jar"/>
-		<yarn:hdfs path="/lib/spring-tx-3.2.1.RELEASE.jar"/>
+		<yarn:hdfs path="/app/*.jar"/>
+		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>
 
 	<!--
