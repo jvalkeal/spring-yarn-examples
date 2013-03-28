@@ -3,3 +3,7 @@ description = 'Spring Yarn Complex Examples'
 project('batch-partition') {
   description = 'Spring Yarn with Batch Partition Example'
 }
+
+project('failing-context') {
+  description = 'Spring Yarn with Failing Context Example'
+}

@@ -11,9 +11,6 @@
 	<bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler"/>
 	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 	<bean id="yarnEventPublisher" class="org.springframework.yarn.event.DefaultYarnEventPublisher"/>
-	<bean class="org.springframework.yarn.event.LoggingListener">
-		<constructor-arg value="info"/>
-	</bean>
 
 	<context:property-placeholder location="hadoop.properties"/>
 
@@ -24,7 +21,7 @@
 	</yarn:configuration>
 
 	<yarn:localresources local="hdfs://0.0.0.0:9000" remote="hdfs://0.0.0.0:9000">
-		<yarn:hdfs path="/app/kill-application/kill-application-1.0.0.M1.jar"/>
+		<yarn:hdfs path="/app/failing-context/failing-context-1.0.0.M1.jar"/>
 		<yarn:hdfs path="/app/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>
@@ -35,7 +32,7 @@
 		</yarn:classpath>
 	</yarn:environment>
 
-	<yarn:master>
+	<yarn:master type="event">
 		<yarn:container-runner/>
 	</yarn:master>
 
