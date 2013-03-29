@@ -8,8 +8,6 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler"/>
-	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
-	<bean id="yarnContainer" class="org.springframework.yarn.examples.FailingContextContainer"/>
+	<yarn:container container-class="org.springframework.yarn.examples.FailingContextContainer"/>
 
 </beans>
