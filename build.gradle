@@ -41,6 +41,7 @@ subprojects { subproject ->
         task "run-${subproject.name}"(dependsOn:'classes') << {
             subproject.tasks['run'].execute()
         }
+        task "dep-${subproject.name}"(dependsOn:'copyToLib')
     }
         
     install {
