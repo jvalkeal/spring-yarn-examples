@@ -77,8 +77,6 @@
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
-	<bean id="reader" class="org.springframework.yarn.examples.ExampleItemReader"/>
-	<bean id="writer" class="org.springframework.yarn.examples.ExampleItemWriter"/>
 
 	<bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
 		<property name="transactionManager" ref="transactionManager"/>
@@ -90,15 +88,9 @@
 
 	<batch:job id="job">
 		<batch:step id="master">
-			<batch:partition step="step" partitioner="yarnAppmaster" handler="partitionHandler"/>
+			<batch:partition partitioner="yarnAppmaster" handler="partitionHandler"/>
 		</batch:step>
 	</batch:job>
-
-	<batch:step id="step">
-		<batch:tasklet transaction-manager="transactionManager" start-limit="100">
-			<batch:chunk reader="reader" writer="writer" commit-interval="1"/>
-		</batch:tasklet>
-	</batch:step>
 
 	<bean id="hello" class="org.springframework.yarn.examples.PrintTasklet">
 		<property name="message" value="Hello"/>
