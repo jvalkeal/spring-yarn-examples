@@ -8,12 +8,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler"/>
-	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 	<bean id="yarnEventPublisher" class="org.springframework.yarn.event.DefaultYarnEventPublisher"/>
-	<bean class="org.springframework.yarn.event.LoggingListener">
-		<constructor-arg value="info"/>
-	</bean>
 
 	<context:property-placeholder location="hadoop.properties"/>
 
@@ -25,7 +20,7 @@
 	</yarn:configuration>
 
 	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
-		<yarn:hdfs path="/app/kill-application/kill-application-1.0.0.M1.jar"/>
+		<yarn:hdfs path="/app/restart-context/*.jar"/>
 		<yarn:hdfs path="/app/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>
@@ -36,7 +31,7 @@
 		</yarn:classpath>
 	</yarn:environment>
 
-	<yarn:master>
+	<yarn:master class="org.springframework.yarn.examples.CustomAppmaster">
 		<yarn:container-runner/>
 	</yarn:master>
 

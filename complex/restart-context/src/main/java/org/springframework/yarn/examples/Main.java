@@ -17,13 +17,12 @@ package org.springframework.yarn.examples;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.yarn.client.YarnClient;
 
 /**
- * Main class for kill-application example.
+ * Main class for failing-context example.
  *
  * @author Janne Valkealahti
  *
@@ -38,14 +37,10 @@ public class Main {
 
 		try {
 			context = new ClassPathXmlApplicationContext("application-context.xml");
-			System.out.println("Submitting kill-application example");
+			System.out.println("Submitting failing-context example");
 			YarnClient client = (YarnClient) context.getBean("yarnClient");
-			ApplicationId applicationId = client.submitApplication();
-			System.out.println("Submitted kill-application example");
-			System.out.println("Waiting 30 seconds before aborting the application");
-			Thread.sleep(30000);
-			System.out.println("Asking resource manager to abort application with applicationid=" + applicationId);
-			client.killApplication(applicationId);
+			client.submitApplication();
+			System.out.println("Submitted failing-context example");
 		} catch (Throwable e) {
 			log.error("Error in main method", e);
 		} finally {

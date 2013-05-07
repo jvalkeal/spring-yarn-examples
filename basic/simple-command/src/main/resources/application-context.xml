@@ -16,7 +16,7 @@
 		fs.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem
 	</yarn:configuration>
 
-	<yarn:localresources local="hdfs://0.0.0.0:9000" remote="${localresources.remote}">
+	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
 		<yarn:hdfs path="/app/simple-command/simple-command-1.0.0.M1.jar"/>
 		<yarn:hdfs path="/app/spring-yarn-core-1.0.0.BUILD-SNAPSHOT.jar"/>
 		<yarn:hdfs path="/lib/aopalliance-1.0.jar"/>
@@ -42,7 +42,7 @@
 			org.springframework.yarn.am.CommandLineAppmasterRunner
 			appmaster-context.xml
 			yarnAppmaster
-			container-count=2
+			container-count=4
 			1><LOG_DIR>/AppMaster.stdout
 			2><LOG_DIR>/AppMaster.stderr
 			]]>

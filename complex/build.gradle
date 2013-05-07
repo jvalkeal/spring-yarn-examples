@@ -4,6 +4,14 @@ project('batch-partition') {
   description = 'Spring Yarn with Batch Partition Example'
 }
 
+project('batch-files') {
+  description = 'Spring Yarn with Batch Files Example'
+}
+
 project('failing-context') {
   description = 'Spring Yarn with Failing Context Example'
+}
+
+project('restart-context') {
+  description = 'Spring Yarn with Restart Context Example'
 }

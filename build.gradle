@@ -58,6 +58,7 @@ subprojects { subproject ->
         compile "org.springframework.yarn:spring-yarn-batch:$springYarnVersion"
         compile "org.apache.hadoop:hadoop-yarn-api:$hadoopVersion"
         compile "org.springframework:spring-jdbc:$springVersion"
+        runtime "org.springframework.data:spring-data-hadoop:1.0.0.RELEASE"
         runtime "org.apache.hadoop:hadoop-yarn-common:$hadoopVersion"
         runtime "org.apache.hadoop:hadoop-common:$hadoopVersion"
         runtime("org.apache.hadoop:hadoop-hdfs:$hadoopVersion") {

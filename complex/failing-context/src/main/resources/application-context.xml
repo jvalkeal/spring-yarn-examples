@@ -16,7 +16,7 @@
 		fs.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem
 	</yarn:configuration>
 
-	<yarn:localresources local="hdfs://0.0.0.0:9000" remote="${localresources.remote}">
+	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
 		<yarn:hdfs path="/app/failing-context/failing-context-1.0.0.M1.jar"/>
 		<yarn:hdfs path="/app/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
