@@ -34,7 +34,7 @@
 	</yarn:environment>
 
 	<util:properties id="customJobParameters">
-		<prop key="input">/syarn-tmp/batch-files/*</prop>
+		<prop key="input">/syarn-tmp/batch-files/set4/*</prop>
 	</util:properties>
 
 	<yarn:client app-name="batch-files">

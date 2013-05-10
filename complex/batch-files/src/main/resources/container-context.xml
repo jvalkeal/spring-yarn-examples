@@ -38,6 +38,14 @@
 		<property name="repositoryFactory" ref="&amp;jobRepository" />
 	</bean>
 
+	<!--
+
+	<bean id="itemReader" class="org.springframework.yarn.examples.FileSplitItemReader" scope="step">
+		<property name="resource" value="#{stepExecutionContext['fileName']}"/>
+		<property name="splitStart" value="#{stepExecutionContext['splitStart']}"/>
+		<property name="splitLength" value="#{stepExecutionContext['splitLength']}"/>
+	</bean>
+
 	<bean id="itemReader" class="org.springframework.batch.item.file.MultiResourceItemReader" scope="step">
 		<property name="resources" value="#{stepExecutionContext['fileName']}"/>
 		<property name="delegate" ref="flatFileItemReader"/>
@@ -48,12 +56,28 @@
 			<bean class="org.springframework.batch.item.file.mapping.PassThroughLineMapper"/>
 		</property>
 	</bean>
+	<bean id="itemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.PassThroughLineMapper"/>
+		</property>
+		<property name="resource" value="#{stepExecutionContext['fileName']}"/>
+	</bean>
+	-->
+
+	<bean id="itemReader" class="org.springframework.yarn.batch.item.HdfsFileSplitItemReader" scope="step">
+		<property name="resource" value="#{stepExecutionContext['fileName']}"/>
+		<property name="splitStart" value="#{stepExecutionContext['splitStart']}"/>
+		<property name="splitLength" value="#{stepExecutionContext['splitLength']}"/>
+		<property name="lineDataMapper">
+			<bean class="org.springframework.yarn.batch.item.PassThroughLineDataMapper"/>
+		</property>
+	</bean>
 
 	<bean id="itemWriter" class="org.springframework.yarn.examples.LoggingItemWriter"/>
 
 	<batch:step id="remoteStep">
 		<batch:tasklet transaction-manager="transactionManager">
-			<batch:chunk commit-interval="1" reader="itemReader" writer="itemWriter"/>
+			<batch:chunk commit-interval="1000" reader="itemReader" writer="itemWriter"/>
 		</batch:tasklet>
 	</batch:step>
 

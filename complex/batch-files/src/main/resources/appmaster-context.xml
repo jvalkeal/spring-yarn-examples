@@ -87,6 +87,9 @@
 
 	<bean id="partitioner" class="org.springframework.yarn.batch.partition.MultiHdfsResourcePartitioner" scope="step">
 		<property name="resources" value="#{jobParameters['input']}"/>
+		<property name="configuration" ref="yarnConfiguration"/>
+		<property name="splitSize" value="2"/>
+		<property name="forceSplit" value="true"/>
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
