@@ -15,3 +15,7 @@ project('failing-context') {
 project('restart-context') {
   description = 'Spring Yarn with Restart Context Example'
 }
+
+project('custom-amservice') {
+  description = 'Spring Yarn with Custom Application Master Service Example'
+}
