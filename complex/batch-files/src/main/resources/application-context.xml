@@ -18,7 +18,7 @@
 	</yarn:configuration>
 
 	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
-		<yarn:hdfs path="/app/batch-files/batch-files-1.0.0.M1.jar"/>
+		<yarn:hdfs path="/app/batch-files/*.jar"/>
 		<yarn:hdfs path="/app/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>
@@ -34,7 +34,7 @@
 	</yarn:environment>
 
 	<util:properties id="customJobParameters">
-		<prop key="input">/syarn-tmp/batch-files/set4/*</prop>
+		<prop key="input">${files:/syarn-tmp/batch-files/set1/*}</prop>
 	</util:properties>
 
 	<yarn:client app-name="batch-files">

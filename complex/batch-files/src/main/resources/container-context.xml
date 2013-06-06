@@ -24,7 +24,9 @@
 	<yarn:configuration register-url-handler="true">
 		fs.defaultFS=${hd.fs}
 	</yarn:configuration>
+
 	<hdp:resource-loader id="hadoopResourceLoader" configuration-ref="yarnConfiguration"/>
+
 	<bean id="defaultResourceLoaders" class="org.springframework.data.hadoop.fs.CustomResourceLoaderRegistrar" p:loader-ref="hadoopResourceLoader" />
 
 	<bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
@@ -37,32 +39,6 @@
 	<bean id="jobExplorer" class="org.springframework.yarn.batch.repository.RemoteJobExplorerFactoryBean">
 		<property name="repositoryFactory" ref="&amp;jobRepository" />
 	</bean>
-
-	<!--
-
-	<bean id="itemReader" class="org.springframework.yarn.examples.FileSplitItemReader" scope="step">
-		<property name="resource" value="#{stepExecutionContext['fileName']}"/>
-		<property name="splitStart" value="#{stepExecutionContext['splitStart']}"/>
-		<property name="splitLength" value="#{stepExecutionContext['splitLength']}"/>
-	</bean>
-
-	<bean id="itemReader" class="org.springframework.batch.item.file.MultiResourceItemReader" scope="step">
-		<property name="resources" value="#{stepExecutionContext['fileName']}"/>
-		<property name="delegate" ref="flatFileItemReader"/>
-	</bean>
-
-	<bean id="flatFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
-		<property name="lineMapper">
-			<bean class="org.springframework.batch.item.file.mapping.PassThroughLineMapper"/>
-		</property>
-	</bean>
-	<bean id="itemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
-		<property name="lineMapper">
-			<bean class="org.springframework.batch.item.file.mapping.PassThroughLineMapper"/>
-		</property>
-		<property name="resource" value="#{stepExecutionContext['fileName']}"/>
-	</bean>
-	-->
 
 	<bean id="itemReader" class="org.springframework.yarn.batch.item.HdfsFileSplitItemReader" scope="step">
 		<property name="resource" value="#{stepExecutionContext['fileName']}"/>
