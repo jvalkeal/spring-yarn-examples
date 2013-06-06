@@ -15,3 +15,7 @@ project('multi-context') {
 project('kill-application') {
   description = 'Spring Yarn with Kill Application Example'
 }
+
+project('file-distribute') {
+  description = 'Spring Yarn with File Distribute Example'
+}
