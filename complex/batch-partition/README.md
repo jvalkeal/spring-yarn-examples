@@ -24,7 +24,7 @@ This example demonstrates a simple batch process by running a *PrintTasklet* on
 partitioned steps on two different stages. In *appmaster-context.xml* we define
 *StaticBatchPartitionHandler* to use 2 containers and the actual job is run with
 two steps.
-```
+```xml
 <bean id="partitionHandler" class="org.springframework.yarn.batch.partition.StaticBatchPartitionHandler">
   <constructor-arg index="0"><ref bean="yarnAppmaster"/></constructor-arg>
   <constructor-arg index="1" value="2"/>
