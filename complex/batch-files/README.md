@@ -50,6 +50,11 @@ data2-line-3
 ...
 ```
 
+You can create these files using a simple bash command.
+```
+# for i in $(seq 1 100000); do echo "data1-line-$i"; done >> linedata1.txt
+```
+
 This example is using normal Spring Yarn Batch functionality to parallelise processing
 of these data files. For simplify in this batch example we just passthough processed lines
 and write those back to a log file. This is enough to verify correct processing of data
