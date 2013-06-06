@@ -59,7 +59,7 @@ Input file set is defined in *application-context.xml* which you can simply over
 using *-Dfiles=/path/to/files* command line parameter.
 ```xml
 <util:properties id="customJobParameters">
-<prop key="input">${files:/syarn-tmp/batch-files/set1/*}</prop>
+  <prop key="input">${files:/syarn-tmp/batch-files/set1/*}</prop>
 </util:properties>
 ```
 
@@ -85,9 +85,9 @@ hadoop/logs/userlogs/application_1368793613271_0063/container_1368793613271_0063
 If we now grep writes to those files it should equal 300000.
 ```
 [root@centos hadoop]# grep writing hadoop/logs/userlogs/application_1368793613271_0063/container_1368793613271_0063_01_0000*/Container.stdout | wc
-99999  799992 18988706
+  99999  799992 18988706
 [root@centos1 hadoop]# grep writing hadoop/logs/userlogs/application_1368793613271_0063/container_1368793613271_0063_01_0000*/Container.stdout | wc
-100654  805232 19102048
+  100654  805232 19102048
 [root@centos2 hadoop]# grep writing hadoop/logs/userlogs/application_1368793613271_0063/container_1368793613271_0063_01_0000*/Container.stdout | wc
-99347  794776 18875931
+  99347  794776 18875931
 ```

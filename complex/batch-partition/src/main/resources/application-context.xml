@@ -17,7 +17,7 @@
 	</yarn:configuration>
 
 	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
-		<yarn:hdfs path="/app/batch-partition/batch-partition-1.0.0.M1.jar"/>
+		<yarn:hdfs path="/app/batch-partition/*.jar"/>
 		<yarn:hdfs path="/app/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>
