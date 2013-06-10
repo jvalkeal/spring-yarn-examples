@@ -1,4 +1,12 @@
 rootProject.name = 'spring-yarn-examples'
 
-include ':basic:simple-command',':basic:list-applications',':basic:multi-context',':basic:kill-application',':basic:file-distribute'
-include ':complex:batch-partition',':complex:failing-context',':complex:restart-context',':complex:batch-files',':complex:custom-amservice'
+include ':yarn:simple-command',':yarn:list-applications',':yarn:multi-context',':yarn:kill-application',':yarn:file-distribute',':yarn:batch-partition',':yarn:failing-context',':yarn:restart-context',':yarn:batch-files',':yarn:custom-amservice'
+
+rootProject.children.find{
+	if (it.name == 'yarn') {
+		it.name = 'yarn-examples-common'		
+		it.children.each{
+			it.name = 'yarn-examples-' + it.name
+		}
+	}
+}

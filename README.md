@@ -25,11 +25,11 @@ Detailed instructions for each example may be found in its own README file.
 
 # General Prerequisites
 
-You can collect maven dependencies for example running gradle task *dep-complex*.
-Dependant libs are then collected under *build/dependency-libs/*. Not all files are
-needed so check below files which should be copied into HDFS.
+You can collect maven dependencies for example running gradle task *copyLibDeps*
+under *yarn-examples-common* project.
+Dependant libs are then collected under yarn/build/dependency-libs/. 
 ```
-# gradlew dep-complex
+# gradlew clean :yarn-examples-common:copyLibDeps
 ```
 There is one jar file per example. To build all examples use gradle build task.
 ```
@@ -41,26 +41,28 @@ Every example jar file has its own directory location in HDFS.
 ```
 [root@centos hadoop]# hadoop/bin/hdfs dfs -ls /lib
 /lib/aopalliance-1.0.jar
-/lib/jackson-annotations-2.1.4.jar
-/lib/jackson-core-2.1.4.jar
-/lib/jackson-databind-2.1.4.jar
-/lib/spring-aop-3.2.1.RELEASE.jar
+/lib/spring-aop-3.1.3.RELEASE.jar
+/lib/spring-asm-3.1.3.RELEASE.jar
 /lib/spring-batch-core-2.1.9.RELEASE.jar
 /lib/spring-batch-infrastructure-2.1.9.RELEASE.jar
-/lib/spring-beans-3.2.1.RELEASE.jar
-/lib/spring-context-3.2.1.RELEASE.jar
-/lib/spring-context-support-3.2.1.RELEASE.jar
-/lib/spring-core-3.2.1.RELEASE.jar
-/lib/spring-data-hadoop-1.0.0.RELEASE.jar
-/lib/spring-expression-3.2.1.RELEASE.jar
-/lib/spring-integration-core-2.2.1.RELEASE.jar
-/lib/spring-integration-ip-2.2.1.RELEASE.jar
-/lib/spring-integration-stream-2.2.1.RELEASE.jar
-/lib/spring-jdbc-3.2.1.RELEASE.jar
-/lib/spring-tx-3.2.1.RELEASE.jar
-/app/spring-yarn-batch-1.0.0.BUILD-SNAPSHOT.jar
-/app/spring-yarn-core-1.0.0.BUILD-SNAPSHOT.jar
-/app/spring-yarn-integration-1.0.0.BUILD-SNAPSHOT.jar
-/app/batch-files/batch-files-1.0.0.M1.jar
+/lib/spring-beans-3.1.3.RELEASE.jar
+/lib/spring-context-3.1.3.RELEASE.jar
+/lib/spring-context-support-3.0.7.RELEASE.jar
+/lib/spring-core-3.1.3.RELEASE.jar
+/lib/spring-data-hadoop-2.0.0.BUILD-SNAPSHOT.jar
+/lib/spring-data-hadoop-batch-2.0.0.BUILD-SNAPSHOT.jar
+/lib/spring-data-hadoop-core-2.0.0.BUILD-SNAPSHOT.jar
+/lib/spring-expression-3.1.3.RELEASE.jar
+/lib/spring-integration-core-2.2.3.RELEASE.jar
+/lib/spring-integration-ip-2.2.3.RELEASE.jar
+/lib/spring-integration-stream-2.2.3.RELEASE.jar
+/lib/spring-jdbc-3.0.7.RELEASE.jar
+/lib/spring-retry-1.0.2.RELEASE.jar
+/lib/spring-tx-3.1.3.RELEASE.jar
+/lib/spring-yarn-batch-2.0.0.BUILD-SNAPSHOT.jar
+/lib/spring-yarn-core-2.0.0.BUILD-SNAPSHOT.jar
+/lib/spring-yarn-integration-2.0.0.BUILD-SNAPSHOT.jar
+/app/multi-context/yarn-examples-multi-context-2.0.0.BUILD-SNAPSHOT.jar
+/app/yarn-examples-common-2.0.0.BUILD-SNAPSHOT.jar
 ...
 ```

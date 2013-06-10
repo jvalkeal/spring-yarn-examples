@@ -1,177 +1,139 @@
 description = 'Spring Yarn Examples'
+defaultTasks 'build'
 
 apply plugin: 'base'
 
-allprojects {
-  group = 'org.springframework.yarn'
-
-  logging.captureStandardOutput LogLevel.DEBUG
- 
-  repositories {
-    // Public Spring artifacts
-    maven { url 'http://repo.springsource.org/libs-milestone' }
-    maven { url 'http://repo.springsource.org/libs-snapshot'}
-    maven { url 'http://repo.springsource.org/libs-release'}
-    maven { url "http://repo.springsource.org/plugins-release"}
-    mavenCentral()
-    mavenLocal()
-  }
-  
+buildscript {
+	repositories {
+		maven { url "http://repo.springsource.org/plugins-release" }
+	}
+	dependencies {
+		classpath("org.springframework.build.gradle:docbook-reference-plugin:0.2.6")
+	}
 }
+
+allprojects {
+	group = 'org.springframework.yarn'
+	logging.captureStandardOutput LogLevel.DEBUG
  
-task listProjects << {
-    subprojects.each { project ->
-        project.allprojects.each {
-            println it.name
-            println it.tasks
-        }
-    } 
+	repositories {
+		// Public Spring artifacts
+		maven { url 'http://repo.springsource.org/libs-milestone' }
+		maven { url 'http://repo.springsource.org/libs-snapshot'}
+		maven { url 'http://repo.springsource.org/libs-release'}
+		maven { url "http://repo.springsource.org/plugins-release"}
+		mavenCentral()
+		mavenLocal()
+	}
 }
 
 subprojects { subproject ->
-    apply plugin: 'idea'
-    apply plugin: 'java'
-    apply plugin: 'eclipse'  // `gradle eclipse` to generate .classpath/.project
-    apply plugin: 'maven'
-
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6 	
+	apply plugin: 'idea'
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	apply plugin: 'maven'
 	
-    apply {
-        task "run-${subproject.name}"(dependsOn:'classes') << {
-            subproject.tasks['run'].execute()
-        }
-        task "dep-${subproject.name}"(dependsOn:'copyToLib')
-    }
-        
-    install {
-        repositories.mavenInstaller {
-            customizePom(pom, subproject)
-        }
-    }
-
-    dependencies { 
-        compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
-        compile "org.springframework.batch:spring-batch-infrastructure:$springBatchVersion"
-        compile "org.springframework.yarn:spring-yarn-core:$springYarnVersion"
-        compile "org.springframework.yarn:spring-yarn-integration:$springYarnVersion"
-        compile "org.springframework.yarn:spring-yarn-batch:$springYarnVersion"
-        compile "org.apache.hadoop:hadoop-yarn-api:$hadoopVersion"
-        compile "org.springframework:spring-jdbc:$springVersion"
-        runtime "org.springframework.data:spring-data-hadoop:1.0.0.RELEASE"
-        runtime "org.apache.hadoop:hadoop-yarn-common:$hadoopVersion"
-        runtime "org.apache.hadoop:hadoop-common:$hadoopVersion"
-        runtime("org.apache.hadoop:hadoop-hdfs:$hadoopVersion") {
-		    exclude group: 'commons-daemon'
-		}
-        runtime "log4j:log4j:$log4jVersion"
-        runtime "org.slf4j:slf4j-log4j12:$slf4jVersion"
-        testCompile "junit:junit-dep:$junitVersion"               
-        testCompile "org.springframework:spring-test:$springVersion"
-    }
-
-    eclipse {
+	sourceCompatibility = 1.6
+	targetCompatibility = 1.6
+	
+	eclipse {
 		project {
 			natures += 'org.springframework.ide.eclipse.core.springnature'
 		}
 	}
 
-    [compileJava, compileTestJava]*.options*.compilerArgs = ["-Xlint:-serial", "-Xlint:-options"]
+	[compileJava, compileTestJava]*.options*.compilerArgs = ["-Xlint:-serial", "-Xlint:-options"]
 
-    task sourcesJar(type: Jar) {
-        classifier = 'sources'
-    }
+	task sourcesJar(type: Jar) {
+		classifier = 'sources'
+	}
 
-    artifacts {
-        archives sourcesJar
-    }
+}
+
+def yarnExampleProjects() {
+	subprojects.findAll { project ->
+		project.name.contains('yarn-examples-') && project.name != 'yarn-examples-common'
+	}
+}
+
+def yarnExampleProjectsWithCommon() {
+	subprojects.findAll { project ->
+		project.name.contains('yarn-examples-')
+	}
+}
+
+def yarnExampleProjectsCommon() {
+	subprojects.findAll { project ->
+		project.name == 'yarn-examples-common'
+	}
+}
+
+task listProjects << {
+	yarnExampleProjects().each{println it}
+//    subprojects.each { project ->
+//        project.allprojects.each {
+//            println it.name
+//            println it.tasks
+//        }
+//    } 
+}
+
+configure(yarnExampleProjectsWithCommon()) {
+	configurations {
+		hadoopruntime.exclude group: 'log4j'
+		hadoopruntime.exclude group: 'org.slf4j'
+		hadoopruntime.exclude group: 'org.apache.hadoop'
+		hadoopruntime.exclude group: 'commons-logging'
+		hadoopruntime.exclude group: 'org.codehaus.jettison'
+		hadoopruntime.exclude group: 'com.thoughtworks.xstream'
+		hadoopruntime.exclude group: 'com.fasterxml.jackson.core'
+	}
+	dependencies {
+		compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
+		compile "org.springframework.batch:spring-batch-infrastructure:$springBatchVersion"
+		compile "org.springframework.data:spring-yarn-batch:$springDataVersion"
+		runtime "org.springframework.data:spring-data-hadoop:$springDataVersion"
+		runtime "org.springframework.data:spring-data-hadoop-core:$springDataVersion"
+		runtime "org.apache.hadoop:hadoop-yarn-api:$hadoopVersion"
+		runtime "org.apache.hadoop:hadoop-yarn-common:$hadoopVersion"
+		runtime "org.apache.hadoop:hadoop-common:$hadoopVersion"
+		runtime("org.apache.hadoop:hadoop-hdfs:$hadoopVersion") {
+			exclude group: 'commons-daemon'
+		}
+		runtime "log4j:log4j:$log4jVersion"
+		runtime "org.slf4j:slf4j-log4j12:$slf4jVersion"
+		hadoopruntime configurations.runtime
+	}
+}
+
+configure(yarnExampleProjectsCommon()) {
+	task copyLibDeps(type: Copy) {
+		into "$buildDir/dependency-libs"
+		from configurations.hadoopruntime
+	}
+}
+
+configure(yarnExampleProjects()) { yarnExampleProject ->
+	dependencies {
+		compile project(":yarn-examples-common")
+	}
 	
-	task copyToLib(type: Copy) {
-        into "$buildDir/dependency-libs"
-        from configurations.runtime
-    }
-	
-	//build.dependsOn(copyToLib)
-
-    task run(type: JavaExec) {
-        description = 'Runs the application'
-        def mainClass = rootProject.hasProperty('main')? "${rootProject.getProperty('main')}":'Main'
-        main = "org.springframework.yarn.examples.$mainClass"
-        classpath = sourceSets.main.runtimeClasspath
-        standardInput = System.in
-        systemProperties = System.getProperties()
-        if (rootProject.hasProperty('args')) {
-            args = ["${rootProject.getProperty('args')}"]
-        }  
-    }
+	task run(type: JavaExec) {
+		description = 'Runs the application'
+//		def mainClass = rootProject.hasProperty('main')? "${rootProject.getProperty('main')}":'CommonMain'
+//		main = "org.springframework.yarn.examples.$mainClass"
+		classpath = sourceSets.main.runtimeClasspath
+		standardInput = System.in
+		systemProperties = System.getProperties()
+		if (rootProject.hasProperty('args')) {
+			args = ["${rootProject.getProperty('args')}"]
+		}  
+	}
+	apply {
+		task "run-${yarnExampleProject.name}"(dependsOn:'classes') << {
+			def mainClass = yarnExampleProject.hasProperty('main')? "${yarnExampleProject.getProperty('main')}":'CommonMain'
+			yarnExampleProject.tasks['run'].main = "org.springframework.yarn.examples.$mainClass"
+			yarnExampleProject.tasks['run'].execute()
+		}
+	}
 }
-
-task wrapper(type: Wrapper) {
-    description = 'Generates gradlew[.bat] scripts'
-    gradleVersion = '1.0'
-}
-
-def customizePom(def pom, def gradleProject) {
-    pom.whenConfigured { generatedPom ->
-        // respect 'optional' and 'provided' dependencies
-        def deps = gradleProject.configurations.runtime.allDependencies
-        def optionalDeps = deps.findAll { dep ->
-            dep.asDynamicObject.hasProperty('optional') && dep.optional
-        }
-        def providedDeps = deps.findAll { dep ->
-            dep.asDynamicObject.hasProperty('provided') && dep.provided
-        }
-        generatedPom.dependencies.each { mavenDep ->
-            mavenDep.optional = optionalDeps.any { optionalDep ->
-                optionalDep.group == mavenDep.groupId &&
-                        optionalDep.name == mavenDep.artifactId &&
-                        optionalDep.version == mavenDep.version
-            }
-            boolean isProvided = providedDeps.any { providedDep ->
-                providedDep.group == mavenDep.groupId &&
-                        providedDep.name == mavenDep.artifactId &&
-                        providedDep.version == mavenDep.version
-            }
-            if (isProvided) {
-                mavenDep.scope = 'provided'
-            }
-        }
-
-        // eliminate test-scoped dependencies (no need in maven central poms)
-        generatedPom.dependencies.removeAll { dep ->
-            dep.scope == 'test'
-        }
-
-        // add all items necessary for maven central publication
-        generatedPom.project {
-            name = gradleProject.description
-            description = gradleProject.description
-            url = 'https://github.com/SpringSource/spring-yarn-examples'
-            organization {
-                name = 'SpringSource'
-                url = 'http://springsource.org'
-            }
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-            scm {
-                url = 'https://github.com/SpringSource/spring-yarn-examples'
-                connection = 'scm:git:git://github.com/SpringSource/spring-yarn-examples'
-                developerConnection = 'scm:git:git://github.com/SpringSource/spring-yarn-examples'
-            }
-            developers {
-                developer {
-                    id = 'jvalkeal'
-                    name = 'Janne Valkealahti'
-                    email = 'janne.valkealahti@gmail.com'
-                }
-            }
-        }
-    }
-}
-
-
