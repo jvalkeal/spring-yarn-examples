@@ -30,6 +30,10 @@ project('yarn-examples-batch-files') {
   description = 'Spring Yarn with Batch Files Example'
 }
 
+project('yarn-examples-batch-amjob') {
+  description = 'Spring Yarn Batch Application Master Job Example'
+}
+
 project('yarn-examples-failing-context') {
   description = 'Spring Yarn with Failing Context Example'
 }

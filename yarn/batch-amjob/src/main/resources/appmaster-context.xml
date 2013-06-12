@@ -26,60 +26,21 @@
 		fs.defaultFS=${hd.fs}
 		yarn.resourcemanager.address=${hd.rm}
 		yarn.resourcemanager.scheduler.address=${hd.scheduler}
-		fs.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem
 	</yarn:configuration>
 
-	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
-		<yarn:hdfs path="/app/batch-partition/*.jar"/>
-		<yarn:hdfs path="/app/*.jar"/>
-		<yarn:hdfs path="/lib/*"/>
-	</yarn:localresources>
+	<yarn:localresources/>
 
-	<yarn:environment>
-		<yarn:classpath default-yarn-app-classpath="true" delimiter=":">
-			./*
-		</yarn:classpath>
-	</yarn:environment>
+	<yarn:environment/>
 
-	<yarn-batch:master>
-		<yarn-batch:container-runner/>
-	</yarn-batch:master>
-
-	<!-- appmaster service client -->
-
-	<bean id="jobRepositoryRemoteService" class="org.springframework.yarn.batch.repository.JobRepositoryRemoteService" >
-		<property name="mapJobRepositoryFactoryBean" ref="&amp;jobRepository"/>
+	<bean id="hello" class="org.springframework.yarn.examples.PrintTasklet">
+		<property name="message" value="Hello"/>
 	</bean>
 
-	<bean id="batchService" class="org.springframework.yarn.batch.repository.BatchAppmasterService" >
-		<property name="jobRepositoryRemoteService" ref="jobRepositoryRemoteService"/>
-	</bean>
-
-	<bean id="mapper" class="org.springframework.yarn.integration.support.Jackson2ObjectMapperFactoryBean" />
-
-	<yarn-int:converter>
-		<bean class="org.springframework.yarn.integration.convert.MindObjectToHolderConverter">
-			<constructor-arg ref="mapper"/>
-		</bean>
-	</yarn-int:converter>
-
-	<yarn-int:converter>
-		<bean class="org.springframework.yarn.integration.convert.MindHolderToObjectConverter">
-			<constructor-arg ref="mapper"/>
-			<constructor-arg value="org.springframework.yarn.batch.repository.bindings"/>
-		</bean>
-	</yarn-int:converter>
-
-	<yarn-int:amservice service-ref="batchService"/>
-
-	<!-- batch config -->
-
-	<bean id="partitionHandler" class="org.springframework.yarn.batch.partition.StaticBatchPartitionHandler">
-		<constructor-arg ref="yarnAppmaster"/>
-		<property name="gridSize" value="2"/>
-	</bean>
-
-	<bean id="partitioner" class="org.springframework.batch.core.partition.support.SimplePartitioner"/>
+	<batch:job id="job">
+		<batch:step id="master">
+			<batch:tasklet transaction-manager="transactionManager" ref="hello"/>
+		</batch:step>
+	</batch:job>
 
 	<bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
 
@@ -87,17 +48,10 @@
 		<property name="transactionManager" ref="transactionManager"/>
 	</bean>
 
-	<batch:job id="job">
-		<batch:step id="master1" next="master2">
-			<batch:partition partitioner="partitioner" handler="partitionHandler"/>
-		</batch:step>
-		<batch:step id="master2">
-			<batch:partition partitioner="partitioner" handler="partitionHandler"/>
-		</batch:step>
-	</batch:job>
-
 	<bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="jobRepository"/>
 	</bean>
+
+	<yarn-batch:master/>
 
 </beans>

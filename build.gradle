@@ -86,7 +86,6 @@ configure(yarnExampleProjectsWithCommon()) {
 		hadoopruntime.exclude group: 'commons-logging'
 		hadoopruntime.exclude group: 'org.codehaus.jettison'
 		hadoopruntime.exclude group: 'com.thoughtworks.xstream'
-		hadoopruntime.exclude group: 'com.fasterxml.jackson.core'
 	}
 	dependencies {
 		compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
