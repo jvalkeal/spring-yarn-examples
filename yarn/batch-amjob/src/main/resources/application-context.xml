@@ -3,12 +3,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:yarn="http://www.springframework.org/schema/yarn"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/yarn http://www.springframework.org/schema/yarn/spring-yarn.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<context:property-placeholder location="hadoop.properties" system-properties-mode="OVERRIDE"/>
+	<util:properties id="props">
+		<prop key="jobName">job1</prop>
+	</util:properties>
+
+	<context:property-placeholder location="hadoop.properties" properties-ref="props" system-properties-mode="OVERRIDE" />
 
 	<yarn:configuration>
 		fs.defaultFS=${hd.fs}
@@ -29,6 +34,7 @@
 		<yarn:classpath default-yarn-app-classpath="true" delimiter=":">
 			./*
 		</yarn:classpath>
+		jobName=${jobName}
 	</yarn:environment>
 
 	<yarn:client app-name="batch-amjob">
