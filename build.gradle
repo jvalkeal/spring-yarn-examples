@@ -101,8 +101,17 @@ configure(yarnExampleProjectsWithCommon()) {
 		}
 		runtime "log4j:log4j:$log4jVersion"
 		runtime "org.slf4j:slf4j-log4j12:$slf4jVersion"
+		testCompile "org.springframework.data:spring-yarn-test:$springDataVersion"
 		hadoopruntime configurations.runtime
 	}
+
+	task testJar(type: Jar) {
+		classifier = 'tests'
+		from sourceSets.test.output
+	}
+
+	assemble.dependsOn = ['jar', 'testJar']
+
 }
 
 configure(yarnExampleProjectsCommon()) {
@@ -128,6 +137,14 @@ configure(yarnExampleProjects()) { yarnExampleProject ->
 			args = ["${rootProject.getProperty('args')}"]
 		}  
 	}
+
+	task copyHadoopRuntimeDeps(type: Copy) {
+		into "$buildDir/dependency-libs"
+		from configurations.hadoopruntime
+	}
+
+	test.dependsOn(copyHadoopRuntimeDeps)
+
 	apply {
 		task "run-${yarnExampleProject.name}"(dependsOn:'classes') << {
 			def mainClass = yarnExampleProject.hasProperty('main')? "${yarnExampleProject.getProperty('main')}":'CommonMain'
