@@ -22,9 +22,9 @@ import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.junit.Test;
 import org.springframework.test.annotation.Timed;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.yarn.test.AbstractYarnClusterTests;
 import org.springframework.yarn.test.context.MiniYarnCluster;
 import org.springframework.yarn.test.context.YarnDelegatingSmartContextLoader;
+import org.springframework.yarn.test.junit.AbstractYarnClusterTests;
 
 @ContextConfiguration(loader=YarnDelegatingSmartContextLoader.class)
 @MiniYarnCluster
