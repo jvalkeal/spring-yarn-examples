@@ -32,7 +32,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.test.annotation.Timed;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.yarn.test.context.MiniYarnCluster;
+import org.springframework.yarn.test.context.MiniHadoopCluster;
 import org.springframework.yarn.test.context.YarnDelegatingSmartContextLoader;
 import org.springframework.yarn.test.junit.AbstractYarnClusterTests;
 
@@ -45,7 +45,7 @@ import org.springframework.yarn.test.junit.AbstractYarnClusterTests;
  *
  */
 @ContextConfiguration(loader=YarnDelegatingSmartContextLoader.class)
-@MiniYarnCluster
+@MiniHadoopCluster
 public class MultiContextTests extends AbstractYarnClusterTests {
 
 	@Test
