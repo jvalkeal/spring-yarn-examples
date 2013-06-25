@@ -115,6 +115,8 @@ configure(yarnExampleProjectsWithCommon()) {
 
 	assemble.dependsOn = ['jar', 'testJar']
 
+	clean.doLast {ant.delete(dir: "target")}
+
 }
 
 configure(yarnExampleProjectsCommon()) {
