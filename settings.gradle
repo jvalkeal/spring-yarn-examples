@@ -1,12 +1,19 @@
 rootProject.name = 'spring-yarn-examples'
 
 include ':yarn:simple-command',':yarn:list-applications',':yarn:multi-context',':yarn:kill-application',':yarn:file-distribute',':yarn:batch-partition',':yarn:failing-context',':yarn:restart-context',':yarn:batch-files',':yarn:custom-amservice',':yarn:batch-amjob'
+include 'mapreduce:wordcount'
 
-rootProject.children.find{
+rootProject.children.find {
 	if (it.name == 'yarn') {
 		it.name = 'yarn-examples-common'		
-		it.children.each{
+		it.children.each {
 			it.name = 'yarn-examples-' + it.name
+		}
+	}
+	if (it.name == 'mapreduce') {
+		it.name = 'mapreduce-examples-common'		
+		it.children.each {
+			it.name = 'mapreduce-examples-' + it.name
 		}
 	}
 }

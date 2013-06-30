@@ -18,12 +18,12 @@ allprojects {
  
 	repositories {
 		// Public Spring artifacts
-		maven { url 'http://repo.springsource.org/libs-milestone' }
-		maven { url 'http://repo.springsource.org/libs-snapshot'}
-		maven { url 'http://repo.springsource.org/libs-release'}
-		maven { url "http://repo.springsource.org/plugins-release"}
-		mavenCentral()
 		mavenLocal()
+		//maven { url 'http://repo.springsource.org/libs-milestone' }
+		//maven { url 'http://repo.springsource.org/libs-snapshot'}
+		maven { url 'http://repo.springsource.org/libs-release'}
+		//maven { url "http://repo.springsource.org/plugins-release"}
+		mavenCentral()
 	}
 }
 
@@ -68,6 +68,24 @@ def yarnExampleProjectsCommon() {
 	}
 }
 
+def mapreduceExampleProjects() {
+	subprojects.findAll { project ->
+		project.name.contains('mapreduce-examples-') && project.name != 'mapreduce-examples-common'
+	}
+}
+
+def mapreduceExampleProjectsWithCommon() {
+	subprojects.findAll { project ->
+		project.name.contains('mapreduce-examples-')
+	}
+}
+
+def mapreduceExampleProjectsCommon() {
+	subprojects.findAll { project ->
+		project.name == 'mapreduce-examples-common'
+	}
+}
+
 task listProjects << {
 	yarnExampleProjects().each{println it}
 //    subprojects.each { project ->
@@ -77,6 +95,7 @@ task listProjects << {
 //        }
 //    } 
 }
+
 
 configure(yarnExampleProjectsWithCommon()) {
 	configurations {
@@ -133,8 +152,6 @@ configure(yarnExampleProjects()) { yarnExampleProject ->
 	
 	task run(type: JavaExec) {
 		description = 'Runs the application'
-//		def mainClass = rootProject.hasProperty('main')? "${rootProject.getProperty('main')}":'CommonMain'
-//		main = "org.springframework.yarn.examples.$mainClass"
 		classpath = sourceSets.main.runtimeClasspath
 		standardInput = System.in
 		systemProperties = System.getProperties()
@@ -155,6 +172,45 @@ configure(yarnExampleProjects()) { yarnExampleProject ->
 			def mainClass = yarnExampleProject.hasProperty('main')? "${yarnExampleProject.getProperty('main')}":'CommonMain'
 			yarnExampleProject.tasks['run'].main = "org.springframework.yarn.examples.$mainClass"
 			yarnExampleProject.tasks['run'].execute()
+		}
+	}
+}
+
+configure(mapreduceExampleProjectsWithCommon()) {
+	dependencies {
+		compile "org.springframework.data:spring-data-hadoop:$springDataVersion"
+		compile "org.springframework.data:spring-data-hadoop-core:$springDataVersion"
+		runtime "org.apache.hadoop:hadoop-mapreduce-client-jobclient:$hadoopVersion"
+		runtime "org.codehaus.groovy:groovy:$groovyVersion"
+		testCompile "org.springframework.data:spring-hadoop-test:$springDataVersion"
+		testCompile "org.hamcrest:hamcrest-core:$hamcrestVersion"
+		testCompile "org.hamcrest:hamcrest-library:$hamcrestVersion"
+	}
+}
+
+configure(mapreduceExampleProjectsCommon()) {
+}
+
+configure(mapreduceExampleProjects()) { mapreduceExampleProject ->
+	dependencies {
+		compile project(":mapreduce-examples-common")
+	}
+
+	task run(type: JavaExec) {
+		description = 'Runs the application'
+		classpath = sourceSets.main.runtimeClasspath
+		standardInput = System.in
+		systemProperties = System.getProperties()
+		if (rootProject.hasProperty('args')) {
+			args = ["${rootProject.getProperty('args')}"]
+		}  
+	}
+
+	apply {
+		task "run-${mapreduceExampleProject.name}"(dependsOn:'classes') << {
+			def mainClass = mapreduceExampleProject.hasProperty('main')? "${mapreduceExampleProject.getProperty('main')}":'CommonMain'
+			mapreduceExampleProject.tasks['run'].main = "org.springframework.data.hadoop.examples.$mainClass"
+			mapreduceExampleProject.tasks['run'].execute()
 		}
 	}
 }
