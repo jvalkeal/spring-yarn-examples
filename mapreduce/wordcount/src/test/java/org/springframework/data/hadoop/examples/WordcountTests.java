@@ -44,30 +44,30 @@ public class WordcountTests extends AbstractMapReduceTests {
 	
 	@Test
 	public void testWordcountJob() throws Exception {
-		
+
 		// run blocks and throws exception if job failed
 		JobRunner runner = (JobRunner) getApplicationContext().getBean("runner");
 		runner.call();
-		
+
 		// get output files from a job
 		Path[] outputFiles = getOutputFilePaths("/user/gutenberg/output/word/");
-        assertEquals(1, outputFiles.length);
-        assertThat(getFileSystem().getFileStatus(outputFiles[0]).getLen(), greaterThan(0l));
+		assertEquals(1, outputFiles.length);
+		assertThat(getFileSystem().getFileStatus(outputFiles[0]).getLen(), greaterThan(0l));
 
-        // read through the file and check that line with
-        // "themselves	6" was found
-        boolean found = false;
-        InputStream in = getFileSystem().open(outputFiles[0]);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-        	if (line.startsWith("themselves")) {
-        		assertThat(line, is("themselves\t6"));
-        		found = true;
-        	}
-        }
-        reader.close();     
-        assertThat("Keyword 'themselves' not found", found);        
+		// read through the file and check that line with
+		// "themselves	6" was found
+		boolean found = false;
+		InputStream in = getFileSystem().open(outputFiles[0]);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			if (line.startsWith("themselves")) {
+				assertThat(line, is("themselves\t6"));
+				found = true;
+			}
+		}
+		reader.close();
+		assertThat("Keyword 'themselves' not found", found);
 	}
 
 }
