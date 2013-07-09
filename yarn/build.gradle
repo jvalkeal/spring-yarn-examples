@@ -45,3 +45,7 @@ project('yarn-examples-restart-context') {
 project('yarn-examples-custom-amservice') {
   description = 'Spring Yarn with Custom Application Master Service Example'
 }
+
+project('yarn-examples-thrift-heartbeat') {
+  description = 'Spring Yarn with Thrift Heartbeat Example'
+}

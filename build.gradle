@@ -110,6 +110,7 @@ configure(yarnExampleProjectsWithCommon()) {
 		compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
 		compile "org.springframework.batch:spring-batch-infrastructure:$springBatchVersion"
 		compile "org.springframework.data:spring-yarn-batch:$springDataVersion"
+		compile "org.springframework.data:spring-yarn-thrift:$springDataVersion"
 		runtime "org.springframework.data:spring-data-hadoop:$springDataVersion"
 		runtime "org.springframework.data:spring-data-hadoop-core:$springDataVersion"
 		runtime "org.apache.hadoop:hadoop-yarn-api:$hadoopVersion"
