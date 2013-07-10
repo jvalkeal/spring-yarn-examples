@@ -17,8 +17,13 @@
 
 	<bean id="yarnAmserviceClient" class="org.springframework.yarn.thrift.hb.HeartbeatAppmasterServiceClient">
 		<property name="serverPort" value="${syarn.amservice.port}" />
+		<property name="serverHost" value="localhost" />
+		<property name="timeout" value="10000" />
+		<property name="nodeId" value="${syarn.amservice.nodeid}" />
 	</bean>
 
-	<yarn:container container-class="org.springframework.yarn.examples.ThriftHeartbeatContainer"/>
+	<!-- as bean reference order for DI to work -->
+	<bean id="thriftHeartbeatContainer" class="org.springframework.yarn.examples.ThriftHeartbeatContainer"/>
+	<yarn:container container-ref="thriftHeartbeatContainer" />
 
 </beans>

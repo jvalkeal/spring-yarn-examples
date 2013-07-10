@@ -39,7 +39,7 @@ import org.springframework.yarn.test.context.YarnDelegatingSmartContextLoader;
 import org.springframework.yarn.test.junit.AbstractYarnClusterTests;
 
 /**
- * Tests for multi context example. We're checking that
+ * Tests for thrift heartbeat example. We're checking that
  * application status is ok and log files looks
  * what is expected.
  *
@@ -51,44 +51,46 @@ import org.springframework.yarn.test.junit.AbstractYarnClusterTests;
 public class ThriftHearbeatTests extends AbstractYarnClusterTests {
 
 	@Test
-	@Timed(millis=70000)
+	@Timed(millis=150000)
 	public void testAppSubmission() throws Exception {
 		ApplicationId applicationId = submitApplication();
 		assertNotNull(applicationId);
-		YarnApplicationState state = waitState(applicationId, 120, TimeUnit.SECONDS, YarnApplicationState.RUNNING);
+		YarnApplicationState state = waitState(applicationId, 60, TimeUnit.SECONDS, YarnApplicationState.RUNNING);
 		assertNotNull(state);
 		assertTrue(state.equals(YarnApplicationState.RUNNING));
 
-		Thread.sleep(20000);
+		Thread.sleep(60000);
 
-//		File workDir = getYarnCluster().getYarnWorkDir();
-//
-//		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-//		String locationPattern = "file:" + workDir.getAbsolutePath() + "/**/*.std*";
-//		Resource[] resources = resolver.getResources(locationPattern);
-//
-//		// appmaster and 4 containers should
-//		// make it 10 log files
-//		assertThat(resources, notNullValue());
-//		assertThat(resources.length, is(10));
-//
-//		for (Resource res : resources) {
-//			File file = res.getFile();
-//			if (file.getName().endsWith("stdout")) {
-//				// there has to be some content in stdout file
-//				assertThat(file.length(), greaterThan(0l));
-//				if (file.getName().equals("Container.stdout")) {
-//					Scanner scanner = new Scanner(file);
-//					String content = scanner.useDelimiter("\\A").next();
-//					scanner.close();
-//					// this is what container will log in stdout
-//					assertThat(content, containsString("Hello from MultiContextBeanExample"));
-//				}
-//			} else if (file.getName().endsWith("stderr")) {
-//				// can't have anything in stderr files
-//				assertThat(file.length(), is(0l));
-//			}
-//		}
+		// long running app, kill it and check that state is KILLED
+		killApplication(applicationId);
+		state = getState(applicationId);
+		assertTrue(state.equals(YarnApplicationState.KILLED));
+
+		// get log files
+		File workDir = getYarnCluster().getYarnWorkDir();
+		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+		String locationPattern = "file:" + workDir.getAbsolutePath() + "/**/*.std*";
+		Resource[] resources = resolver.getResources(locationPattern);
+
+		// appmaster and 1 container with one restart should make it 6 log files
+		assertThat(resources, notNullValue());
+		assertThat(resources.length, is(6));
+
+		// do some checks for log file content
+		for (Resource res : resources) {
+			File file = res.getFile();
+			if (file.getName().endsWith("stdout")) {
+				// there has to be some content in stdout file
+				assertThat(file.length(), greaterThan(0l));
+				if (file.getName().equals("Container.stdout")) {
+					Scanner scanner = new Scanner(file);
+					String content = scanner.useDelimiter("\\A").next();
+					scanner.close();
+					// this is what xd container should log
+					assertThat(content, containsString("ThriftHeartbeatContainer"));
+				}
+			}
+		}
 	}
 
 }

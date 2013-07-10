@@ -71,11 +71,23 @@ public class ThriftHeartbeatAppmaster extends StaticEventingAppmaster
 			Map<String, String> env = new HashMap<String, String>(context.getEnvironment());
 			env.put(YarnSystemConstants.AMSERVICE_PORT, Integer.toString(port));
 			env.put(YarnSystemConstants.AMSERVICE_HOST, address);
+			// for now always use same id
+			env.put("syarn.amservice.nodeid", "1");
 			context.setEnvironment(env);
 			return context;
 		} else {
 			return context;
 		}
+
+		// below uncommented code is from other example which
+		// tracked failed containers by assigning 'some' data
+		// with container id order to have some understanding
+		// what was the actual task container was doing.
+		//
+		// I believe we should add similar info to thrift
+		// so that when heartbeat system notifies that container is
+		// down, we'd know which container was it and what
+		// was it doing.
 
 //		ContainerId containerId = context.getContainerId();
 //		Integer attempt = 1;
@@ -97,7 +109,6 @@ public class ThriftHeartbeatAppmaster extends StaticEventingAppmaster
 	protected boolean onContainerFailed(ContainerId containerId) {
 		log.info("onContainerFailed: " + containerId);
 //		failed.add(containerId);
-//		getAllocator().allocateContainers(1);
 		return true;
 	}
 
@@ -113,9 +124,11 @@ public class ThriftHeartbeatAppmaster extends StaticEventingAppmaster
 
 	@Override
 	public void nodeDead(HeartbeatNode node, NodeState state) {
-		log.info("nodeDead");
 		if (restartsRemaining-- > 0) {
+			log.info("nodeDead, restarting container");
 			getAllocator().allocateContainers(1);
+		} else {
+			log.info("nodeDead");
 		}
 	}
 

@@ -17,24 +17,42 @@ package org.springframework.yarn.examples;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.yarn.container.AbstractYarnContainer;
 import org.springframework.yarn.container.YarnContainer;
+import org.springframework.yarn.thrift.hb.HeartbeatAppmasterServiceClient;
+import org.springframework.yarn.thrift.hb.gen.NodeInfo;
 
 /**
- * Simple {@link YarnContainer} example which is able
- * to exist with error status to demonstrate how it is
- * handled on Application Master.
+ * Simple {@link YarnContainer} example which exit
+ * after a sleeping period. This container is used
+ * together with thrift based heartbeat system and
+ * we do sleep to give some time for the service
+ * to call appmaster and notify its existence.
  *
  * @author Janne Valkealahti
  *
  */
-public class ThriftHeartbeatContainer extends AbstractYarnContainer {
+public class ThriftHeartbeatContainer extends AbstractYarnContainer implements ApplicationContextAware {
 
 	private static final Log log = LogFactory.getLog(ThriftHeartbeatContainer.class);
+
+	private ApplicationContext context;
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.context = applicationContext;
+	}
 
 	@Override
 	protected void runInternal() {
 		log.info("Hello from ThriftHeartbeatContainer");
+
+		log.info("Setting default node info for heartbeat to start");
+		HeartbeatAppmasterServiceClient serviceClient = context.getBean(HeartbeatAppmasterServiceClient.class);
+		serviceClient.setNodeInfo(new NodeInfo());
 
 		log.info("Sleeping 10 seconds");
 		try {
