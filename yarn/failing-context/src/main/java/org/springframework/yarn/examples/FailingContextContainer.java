@@ -19,6 +19,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.yarn.api.records.ContainerId;
+import org.apache.hadoop.yarn.util.ConverterUtils;
 import org.springframework.yarn.YarnSystemConstants;
 import org.springframework.yarn.container.AbstractYarnContainer;
 import org.springframework.yarn.container.YarnContainer;
@@ -49,7 +51,8 @@ public class FailingContextContainer extends AbstractYarnContainer {
 			log.info("key=" + entry.getKey() + ", value=" + entry.getValue());
 		}
 
-		int containerId = Integer.parseInt(getEnvironment(YarnSystemConstants.SYARN_CONTAINER_ID));
+		ContainerId cid = ConverterUtils.toContainerId(getEnvironment(YarnSystemConstants.SYARN_CONTAINER_ID));
+		int containerId = cid.getId();
 
 		// We just use the container id found from token variable
 		// to fail every other container.
