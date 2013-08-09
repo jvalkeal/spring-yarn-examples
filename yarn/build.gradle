@@ -13,6 +13,11 @@ project('yarn-examples-multi-context') {
   description = 'Spring Yarn with Multi Context Example'
 }
 
+project('yarn-examples-multi-context-jc') {
+  description = 'Spring Yarn with Multi Context JavaConfig Example'
+  ext.main = 'Main'
+}
+
 project('yarn-examples-kill-application') {
   description = 'Spring Yarn with Kill Application Example'
   ext.main = 'Main'

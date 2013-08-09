@@ -119,6 +119,7 @@ configure(yarnExampleProjectsWithCommon()) {
 		runtime("org.apache.hadoop:hadoop-hdfs:$hadoopVersion") {
 			exclude group: 'commons-daemon'
 		}
+		runtime "cglib:cglib:$cglibVersion"
 		runtime "log4j:log4j:$log4jVersion"
 		runtime "org.slf4j:slf4j-log4j12:$slf4jVersion"
 		testCompile "org.springframework.data:spring-yarn-test:$springDataVersion"
