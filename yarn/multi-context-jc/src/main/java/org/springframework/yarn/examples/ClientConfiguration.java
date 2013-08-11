@@ -48,14 +48,14 @@ public class ClientConfiguration extends SpringYarnConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(YarnConfigBuilder config) throws Exception {
+	public void configure(YarnConfigBuilder config) throws Exception {
 		config
 			.fileSystemUri(fsUri)
 			.resourceManagerAddress(rmAddress);
 	}
 
 	@Override
-	protected void configure(YarnResourceLocalizerBuilder localizer) throws Exception {
+	public void configure(YarnResourceLocalizerBuilder localizer) throws Exception {
 		localizer
 			.withCopy()
 				.copy("file:build/dependency-libs/*", "/lib/", false)
@@ -67,14 +67,14 @@ public class ClientConfiguration extends SpringYarnConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(YarnEnvironmentBuilder environment) throws Exception {
+	public void configure(YarnEnvironmentBuilder environment) throws Exception {
 		environment
 			.withClasspath()
 				.entry("./*");
 	}
 
 	@Override
-	protected void configure(YarnClientBuilder client) throws Exception {
+	public void configure(YarnClientBuilder client) throws Exception {
 		client
 			.withMasterRunner()
 				.clazz(MasterConfiguration.class);

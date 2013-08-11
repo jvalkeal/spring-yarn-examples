@@ -26,7 +26,7 @@ import org.springframework.yarn.config.annotation.yarn.builders.YarnContainerBui
 public class ContainerConfiguration extends SpringYarnConfigurerAdapter {
 
 	@Override
-	protected void configure(YarnContainerBuilder container) throws Exception {
+	public void configure(YarnContainerBuilder container) throws Exception {
 		container
 			.clazz(MultiContextBeanExample.class);
 	}

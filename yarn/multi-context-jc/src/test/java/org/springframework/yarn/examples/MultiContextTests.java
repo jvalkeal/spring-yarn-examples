@@ -95,7 +95,7 @@ public class MultiContextTests extends AbstractYarnClusterTests {
 	static class Config extends SpringYarnConfigurerAdapter {
 
 		@Override
-		protected void configure(YarnResourceLocalizerBuilder localizer) throws Exception {
+		public void configure(YarnResourceLocalizerBuilder localizer) throws Exception {
 			localizer
 				.withCopy()
 					.copy("file:build/dependency-libs/*", "/lib/", false)
@@ -107,14 +107,14 @@ public class MultiContextTests extends AbstractYarnClusterTests {
 		}
 
 		@Override
-		protected void configure(YarnEnvironmentBuilder environment) throws Exception {
+		public void configure(YarnEnvironmentBuilder environment) throws Exception {
 			environment
 				.withClasspath()
 					.entry("./*");
 		}
 
 		@Override
-		protected void configure(YarnClientBuilder client) throws Exception {
+		public void configure(YarnClientBuilder client) throws Exception {
 			client
 				.withMasterRunner()
 					.clazz(MasterConfiguration.class);

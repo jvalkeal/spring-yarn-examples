@@ -51,7 +51,7 @@ public class MasterConfiguration extends SpringYarnConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(YarnConfigBuilder config) throws Exception {
+	public void configure(YarnConfigBuilder config) throws Exception {
 		config
 			.fileSystemUri(fsUri)
 			.resourceManagerAddress(rmAddress)
@@ -60,7 +60,7 @@ public class MasterConfiguration extends SpringYarnConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(YarnResourceLocalizerBuilder localizer) throws Exception {
+	public void configure(YarnResourceLocalizerBuilder localizer) throws Exception {
 		localizer
 			.withHdfs()
 				.hdfs("/app/multi-context-jc/*.jar")
@@ -68,17 +68,17 @@ public class MasterConfiguration extends SpringYarnConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(YarnEnvironmentBuilder environment) throws Exception {
+	public void configure(YarnEnvironmentBuilder environment) throws Exception {
 		environment
 		.withClasspath()
 			.entry("./*");
 	}
 
 	@Override
-	protected void configure(YarnAppmasterBuilder master) throws Exception {
+	public void configure(YarnAppmasterBuilder master) throws Exception {
 		master
 			.withContainerRunner()
-				.clazz(ContainerConfiguration.class);
+				.contextClass(ContainerConfiguration.class);
 	}
 
 }
