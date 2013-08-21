@@ -5,6 +5,6 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/yarn http://www.springframework.org/schema/yarn/spring-yarn.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<yarn:container container-class="org.springframework.yarn.examples.MultiContextBeanExample"/>
+	<yarn:container container-class="org.springframework.yarn.examples.MultiContextContainer"/>
 
 </beans>

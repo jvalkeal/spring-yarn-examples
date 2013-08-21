@@ -40,7 +40,7 @@ import org.springframework.yarn.test.junit.AbstractYarnClusterTests;
  * Tests for multi context example. We're checking that
  * application status is ok and log files looks
  * what is expected.
- * 
+ *
  * @author Janne Valkealahti
  *
  */
@@ -54,20 +54,20 @@ public class MultiContextTests extends AbstractYarnClusterTests {
 		YarnApplicationState state = submitApplicationAndWait();
 		assertNotNull(state);
 		assertTrue(state.equals(YarnApplicationState.FINISHED));
-		
+
 		File workDir = getYarnCluster().getYarnWorkDir();
-		
+
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		String locationPattern = "file:" + workDir.getAbsolutePath() + "/**/*.std*";
 		Resource[] resources = resolver.getResources(locationPattern);
-		
+
 		// appmaster and 4 containers should
 		// make it 10 log files
 		assertThat(resources, notNullValue());
 		assertThat(resources.length, is(10));
-		
+
 		for (Resource res : resources) {
-			File file = res.getFile();		
+			File file = res.getFile();
 			if (file.getName().endsWith("stdout")) {
 				// there has to be some content in stdout file
 				assertThat(file.length(), greaterThan(0l));
@@ -76,13 +76,13 @@ public class MultiContextTests extends AbstractYarnClusterTests {
 					String content = scanner.useDelimiter("\\A").next();
 					scanner.close();
 					// this is what container will log in stdout
-					assertThat(content, containsString("Hello from MultiContextBeanExample"));
+					assertThat(content, containsString("Hello from MultiContextContainer"));
 				}
 			} else if (file.getName().endsWith("stderr")) {
 				// can't have anything in stderr files
 				assertThat(file.length(), is(0l));
 			}
-		}		
+		}
 	}
 
 }

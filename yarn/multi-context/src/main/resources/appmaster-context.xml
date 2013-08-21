@@ -18,14 +18,11 @@
 
 	<yarn:localresources>
 		<yarn:hdfs path="/app/multi-context/*.jar"/>
-		<yarn:hdfs path="/app/*.jar"/>
 		<yarn:hdfs path="/lib/*.jar"/>
 	</yarn:localresources>
 
 	<yarn:environment>
-		<yarn:classpath>
-			./*
-		</yarn:classpath>
+		<yarn:classpath/>
 	</yarn:environment>
 
 	<yarn:master>

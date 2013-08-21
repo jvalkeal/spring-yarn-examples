@@ -22,13 +22,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.yarn.container.YarnContainer;
 
-public class MultiContextBeanExample implements YarnContainer {
+public class MultiContextContainer implements YarnContainer {
 
-	private static final Log log = LogFactory.getLog(MultiContextBeanExample.class);
+	private static final Log log = LogFactory.getLog(MultiContextContainer.class);
 
 	@Override
 	public void run() {
-		log.info("Hello from MultiContextBeanExample");
+		log.info("Hello from MultiContextContainer");
 	}
 
 	@Override
