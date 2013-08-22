@@ -14,15 +14,13 @@
 	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 
 	<yarn:configuration>
-		fs.defaultFS=${hd.fs}
-		yarn.resourcemanager.address=${hd.rm}
-		yarn.resourcemanager.scheduler.address=${hd.scheduler}
-		fs.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem
+		fs.defaultFS=${syarn.hd.fs}
+		yarn.resourcemanager.address=${syarn.hd.rm}
+		yarn.resourcemanager.scheduler.address=${syarn.hd.scheduler}
 	</yarn:configuration>
 
-	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
+	<yarn:localresources>
 		<yarn:hdfs path="/app/simple-command/*.jar"/>
-		<yarn:hdfs path="/app/*.jar"/>
 		<yarn:hdfs path="/lib/*.jar"/>
 	</yarn:localresources>
 

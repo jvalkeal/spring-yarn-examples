@@ -28,9 +28,9 @@ import org.springframework.yarn.container.YarnContainer;
  * @author Janne Valkealahti
  *
  */
-public class KillApplicationBeanExample implements YarnContainer {
+public class KillApplicationContainer implements YarnContainer {
 
-	private static final Log log = LogFactory.getLog(KillApplicationBeanExample.class);
+	private static final Log log = LogFactory.getLog(KillApplicationContainer.class);
 
 	@Override
 	public void run() {

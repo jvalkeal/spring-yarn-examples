@@ -8,27 +8,30 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean id="yarnEventPublisher" class="org.springframework.yarn.event.DefaultYarnEventPublisher"/>
-
-	<context:property-placeholder location="hadoop.properties"/>
+	<context:property-placeholder location="hadoop.properties" system-properties-mode="OVERRIDE"/>
 
 	<yarn:configuration>
-		fs.defaultFS=${syarn.hd.fs}
-		yarn.resourcemanager.address=${syarn.hd.rm}
-		yarn.resourcemanager.scheduler.address=${syarn.hd.scheduler}
+		fs.defaultFS=${hd.fs}
+		yarn.resourcemanager.address=${hd.rm}
 	</yarn:configuration>
 
 	<yarn:localresources>
+		<yarn:copy src="file:build/dependency-libs/*" dest="/lib/"/>
+		<yarn:copy src="file:build/libs/*" dest="/app/restart-context/"/>
 		<yarn:hdfs path="/app/restart-context/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>
 
-	<yarn:environment>
+	<!--
+	yarn container execution will fail in 2.0.3 if environment variables are sent
+	from windows to appmaster running on linux.
+	-->
+	<yarn:environment include-system-env="false">
 		<yarn:classpath/>
 	</yarn:environment>
 
-	<yarn:master class="org.springframework.yarn.examples.CustomAppmaster">
-		<yarn:container-runner/>
-	</yarn:master>
+	<yarn:client app-name="restart-context">
+		<yarn:master-runner/>
+	</yarn:client>
 
 </beans>

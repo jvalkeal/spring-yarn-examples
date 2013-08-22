@@ -28,7 +28,7 @@
 		yarn.resourcemanager.scheduler.address=${syarn.hd.scheduler}
 	</yarn:configuration>
 
-	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
+	<yarn:localresources>
 		<yarn:hdfs path="/app/batch-partition/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>

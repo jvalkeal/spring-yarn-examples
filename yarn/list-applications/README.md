@@ -1,17 +1,17 @@
 Spring Yarn List Applications Example
 =====================================
 
-To run this example, open a command window, go to the the spring-yarn-examples root directory, and type:
+To test this example:
 
-		./gradlew -q run-list-applications		
-        ./gradlew -q run-list-applications -Dhd.fs=hdfs://192.168.223.139:9000 -Dhd.rm=192.168.223.139:8032
+		./gradlew clean :yarn-examples-common:yarn-examples-list-applications:build
 
-Or to run from your IDE, run one of the following commands once.
+To run this example against local Hadoop cluster:
 
-		./gradlew eclipse
-		./gradlew idea 
+		./gradlew -q run-yarn-examples-list-applications
 
-Then import the project into your IDE and run Main.java
+To run this example against remote Hadoop cluster:
+
+		./gradlew -q run-yarn-examples-list-applications -Dhd.rm=192.168.223.139:8032
 
 # Details
 

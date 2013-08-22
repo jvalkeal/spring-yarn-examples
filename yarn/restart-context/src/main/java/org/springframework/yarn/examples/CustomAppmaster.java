@@ -18,10 +18,12 @@ package org.springframework.yarn.examples;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.hadoop.yarn.api.records.ContainerId;
 import org.apache.hadoop.yarn.api.records.ContainerLaunchContext;
+import org.apache.hadoop.yarn.api.records.ContainerStatus;
 import org.springframework.yarn.am.ContainerLauncherInterceptor;
 import org.springframework.yarn.am.StaticEventingAppmaster;
 import org.springframework.yarn.am.container.AbstractLauncher;
@@ -71,5 +73,19 @@ public class CustomAppmaster extends StaticEventingAppmaster implements Containe
 		getAllocator().allocateContainers(1);
 		return true;
 	}
+
+//	@Override
+//	protected void onContainerCompleted(ContainerStatus status) {
+//		if (status.getExitStatus() != 0) {
+//			failed.remove(status.getContainerId());
+//		}
+//		super.onContainerCompleted(status);
+//	}
+
+//	@Override
+//	protected boolean isComplete() {
+//		getMonitor().
+//		return super.isComplete();
+//	}
 
 }

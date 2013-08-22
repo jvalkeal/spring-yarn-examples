@@ -11,6 +11,6 @@
 	<bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler"/>
 	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 
-	<bean id="yarnContainer" class="org.springframework.yarn.examples.KillApplicationBeanExample"/>
+	<bean id="yarnContainer" class="org.springframework.yarn.examples.KillApplicationContainer"/>
 
 </beans>

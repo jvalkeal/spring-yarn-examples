@@ -8,27 +8,10 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean id="yarnEventPublisher" class="org.springframework.yarn.event.DefaultYarnEventPublisher"/>
+	<yarn:localresources/>
 
-	<context:property-placeholder location="hadoop.properties"/>
+	<yarn:environment/>
 
-	<yarn:configuration>
-		fs.defaultFS=${syarn.hd.fs}
-		yarn.resourcemanager.address=${syarn.hd.rm}
-		yarn.resourcemanager.scheduler.address=${syarn.hd.scheduler}
-	</yarn:configuration>
-
-	<yarn:localresources>
-		<yarn:hdfs path="/app/restart-context/*.jar"/>
-		<yarn:hdfs path="/lib/*"/>
-	</yarn:localresources>
-
-	<yarn:environment>
-		<yarn:classpath/>
-	</yarn:environment>
-
-	<yarn:master class="org.springframework.yarn.examples.CustomAppmaster">
-		<yarn:container-runner/>
-	</yarn:master>
+	<yarn:client/>
 
 </beans>

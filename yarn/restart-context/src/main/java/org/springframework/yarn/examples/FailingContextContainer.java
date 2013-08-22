@@ -39,27 +39,37 @@ public class FailingContextContainer extends AbstractYarnContainer {
 	protected void runInternal() {
 		log.info("Hello from FailingContextContainer");
 
-		log.info("container parameters:");
-		for(Entry<Object, Object> entry : getParameters().entrySet()) {
-			log.info("key=" + entry.getKey() + ", value=" + entry.getValue());
-		}
+//		log.info("container parameters:");
+//		for(Entry<Object, Object> entry : getParameters().entrySet()) {
+//			log.info("key=" + entry.getKey() + ", value=" + entry.getValue());
+//		}
+//
+//		log.info("container environment:");
+//		for(Entry<String, String> entry : getEnvironment().entrySet()) {
+//			log.info("key=" + entry.getKey() + ", value=" + entry.getValue());
+//		}
 
-		log.info("container environment:");
-		for(Entry<String, String> entry : getEnvironment().entrySet()) {
-			log.info("key=" + entry.getKey() + ", value=" + entry.getValue());
-		}
-
-		int containerId = Integer.parseInt(getEnvironment(YarnSystemConstants.SYARN_CONTAINER_ID));
+		// just get the last number from "container_1377159599818_0001_01_000002"
+		String containerIdString = getEnvironment(YarnSystemConstants.SYARN_CONTAINER_ID);
+		int containerId = Integer.parseInt(containerIdString.substring(containerIdString.length()-1));
 
 		// We just use the container id found from token variable
-		// to fail every other container.
-		if ((containerId % 2) == 0) {
+		// to fail first container (with id 2)
+		if ((containerId == 2)) {
 			log.info("Exiting with error");
 			System.exit(1);
 		} else {
 			log.info("Exiting with ok");
 			System.exit(0);
 		}
+
+//		if ((containerId % 2) == 0) {
+//			log.info("Exiting with error");
+//			System.exit(1);
+//		} else {
+//			log.info("Exiting with ok");
+//			System.exit(0);
+//		}
 	}
 
 }
