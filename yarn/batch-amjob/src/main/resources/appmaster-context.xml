@@ -28,8 +28,9 @@
 	<context:property-placeholder location="hadoop.properties" properties-ref="props" system-properties-mode="OVERRIDE"/>
 
 	<yarn:configuration>
-		fs.defaultFS=${hd.fs}
-		yarn.resourcemanager.address=${hd.rm}
+		fs.defaultFS=${syarn.hd.fs}
+		yarn.resourcemanager.address=${syarn.hd.rm}
+		yarn.resourcemanager.scheduler.address=${syarn.hd.scheduler}
 	</yarn:configuration>
 
 	<yarn:localresources/>

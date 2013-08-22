@@ -15,12 +15,9 @@
 
 	<context:property-placeholder location="hadoop.properties" properties-ref="props" system-properties-mode="OVERRIDE" />
 
-	<yarn:configuration>
-		fs.defaultFS=${hd.fs}
-		yarn.resourcemanager.address=${hd.rm}
-	</yarn:configuration>
-
-	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
+	<yarn:localresources>
+		<yarn:copy src="file:build/dependency-libs/*" dest="/lib/"/>
+		<yarn:copy src="file:build/libs/*" dest="/app/batch-amjob/"/>
 		<yarn:hdfs path="/app/batch-amjob/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>
@@ -30,9 +27,7 @@
 	from windows to appmaster running on linux.
 	-->
 	<yarn:environment include-system-env="false">
-		<yarn:classpath default-yarn-app-classpath="true" delimiter=":">
-			./*
-		</yarn:classpath>
+		<yarn:classpath/>
 		jobName=${jobName}
 	</yarn:environment>
 
