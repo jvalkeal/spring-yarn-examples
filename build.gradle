@@ -68,35 +68,6 @@ def yarnExampleProjectsCommon() {
 	}
 }
 
-def mapreduceExampleProjects() {
-	subprojects.findAll { project ->
-		project.name.contains('mapreduce-examples-') && project.name != 'mapreduce-examples-common'
-	}
-}
-
-def mapreduceExampleProjectsWithCommon() {
-	subprojects.findAll { project ->
-		project.name.contains('mapreduce-examples-')
-	}
-}
-
-def mapreduceExampleProjectsCommon() {
-	subprojects.findAll { project ->
-		project.name == 'mapreduce-examples-common'
-	}
-}
-
-task listProjects << {
-	yarnExampleProjects().each{println it}
-//    subprojects.each { project ->
-//        project.allprojects.each {
-//            println it.name
-//            println it.tasks
-//        }
-//    } 
-}
-
-
 configure(yarnExampleProjectsWithCommon()) {
 	configurations {
 		hadoopruntime.exclude group: 'log4j'
@@ -110,7 +81,6 @@ configure(yarnExampleProjectsWithCommon()) {
 		compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
 		compile "org.springframework.batch:spring-batch-infrastructure:$springBatchVersion"
 		compile "org.springframework.data:spring-yarn-batch:$springDataVersion"
-		compile "org.springframework.data:spring-yarn-thrift:$springDataVersion"
 		runtime "org.springframework.data:spring-data-hadoop:$springDataVersion"
 		runtime "org.springframework.data:spring-data-hadoop-core:$springDataVersion"
 		runtime "org.apache.hadoop:hadoop-yarn-api:$hadoopVersion"
@@ -177,41 +147,3 @@ configure(yarnExampleProjects()) { yarnExampleProject ->
 	}
 }
 
-configure(mapreduceExampleProjectsWithCommon()) {
-	dependencies {
-		compile "org.springframework.data:spring-data-hadoop:$springDataVersion"
-		compile "org.springframework.data:spring-data-hadoop-core:$springDataVersion"
-		runtime "org.apache.hadoop:hadoop-mapreduce-client-jobclient:$hadoopVersion"
-		runtime "org.codehaus.groovy:groovy:$groovyVersion"
-		testCompile "org.springframework.data:spring-hadoop-test:$springDataVersion"
-		testCompile "org.hamcrest:hamcrest-core:$hamcrestVersion"
-		testCompile "org.hamcrest:hamcrest-library:$hamcrestVersion"
-	}
-}
-
-configure(mapreduceExampleProjectsCommon()) {
-}
-
-configure(mapreduceExampleProjects()) { mapreduceExampleProject ->
-	dependencies {
-		compile project(":mapreduce-examples-common")
-	}
-
-	task run(type: JavaExec) {
-		description = 'Runs the application'
-		classpath = sourceSets.main.runtimeClasspath
-		standardInput = System.in
-		systemProperties = System.getProperties()
-		if (rootProject.hasProperty('args')) {
-			args = ["${rootProject.getProperty('args')}"]
-		}  
-	}
-
-	apply {
-		task "run-${mapreduceExampleProject.name}"(dependsOn:'classes') << {
-			def mainClass = mapreduceExampleProject.hasProperty('main')? "${mapreduceExampleProject.getProperty('main')}":'CommonMain'
-			mapreduceExampleProject.tasks['run'].main = "org.springframework.data.hadoop.examples.$mainClass"
-			mapreduceExampleProject.tasks['run'].execute()
-		}
-	}
-}

@@ -12,7 +12,7 @@ To run this example against local Hadoop cluster:
 
 To run this example against remote Hadoop cluster:
 
-		./gradlew -q run-yarn-examples-batch-amjob -Dhd.fs=hdfs://192.168.223.139:9000 -Dhd.rm=192.168.223.139:8032 -Dlocalresources.remote=hdfs://192.168.223.139:9000
+		./gradlew -q run-yarn-examples-batch-amjob -Dhd.fs=hdfs://192.168.223.139:8020 -Dhd.rm=192.168.223.139:8032 -Dlocalresources.remote=hdfs://192.168.223.139:8020
 
 # Details
 

@@ -8,15 +8,9 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<context:property-placeholder location="hadoop.properties" system-properties-mode="OVERRIDE"/>
-
-	<yarn:configuration>
-		fs.defaultFS=${hd.fs}
-		yarn.resourcemanager.address=${hd.rm}
-		fs.hdfs.impl=org.apache.hadoop.hdfs.DistributedFileSystem
-	</yarn:configuration>
-
-	<yarn:localresources local="${hd.fs}" remote="${hd.fs}">
+	<yarn:localresources>
+		<yarn:copy src="file:build/dependency-libs/*" dest="/lib/"/>
+		<yarn:copy src="file:build/libs/*" dest="/app/batch-partition/"/>
 		<yarn:hdfs path="/app/batch-partition/*.jar"/>
 		<yarn:hdfs path="/lib/*"/>
 	</yarn:localresources>
